@@ -84,7 +84,7 @@ def rotate(q,v):
 
 def quaternion(v):
     q=v.copy()
-    q['W']=0.0;
+    q['W']=0.0
     return q
 
 def vector(q):
@@ -120,19 +120,19 @@ class Stopwatch:
         self.startTime = None
 
     def run(self):
-        print 'Waiting for robot to start the race...'
+        print('Waiting for robot to start the race...')
         while xyDistance(self.startPose,getPose()) < START_THRESHOLD:
             time.sleep(0.01)
         self.startTime = time.time()
-        print 'GO!'
+        print('GO!')
         totCount = float(len(self.path))
         for i,point in enumerate(self.path):
             self.passPoint(point)
-            print '%.0f%% of the path completed: %.2f seconds'%(i/totCount*100,time.time()-self.startTime)
-        print 'All points passed, looking for goal point...'
+            print('%.0f%% of the path completed: %.2f seconds'%(i/totCount*100,time.time()-self.startTime))
+        print('All points passed, looking for goal point...')
         self.passPoint(self.path[-1],GOAL_THRESHOLD)
         self.goalTime = time.time()
-        print 'Goal reached in %.2f seconds.'%(self.goalTime-self.startTime)
+        print('Goal reached in %.2f seconds.'%(self.goalTime-self.startTime))
 
     def passPoint(self,pose,threshold=PASS_THRESHOLD):
         while xyDistance(pose,getPose()) > threshold:
