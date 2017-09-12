@@ -1,4 +1,5 @@
 import json
+from .maths.Vector import Vector
 
 class Path:
 
@@ -15,8 +16,8 @@ class Path:
         self.path = data
     
     def vectorizePath(self):
-        vecArray = [{'X': p['Pose']['Position']['X'], \
-                     'Y': p['Pose']['Position']['Y'], \
-                     'Z': p['Pose']['Position']['Z']}\
+        vecArray = [Vector(p['Pose']['Position']['X'],
+                     p['Pose']['Position']['Y'],
+                     p['Pose']['Position']['Z'])
                      for p in self.path]
         return vecArray
