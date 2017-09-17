@@ -1,4 +1,4 @@
-
+from math import atan2, sqrt, pow
 import numpy
 
 
@@ -22,7 +22,19 @@ class Vector:
             return Vector(self.x + other.x,
                           self.y + other.y,
                           self.z + other.z)
+        else:
+            raise NotImplemented()
 
+    def __sub__(self, other):
+        if isinstance(other, Vector):
+            return Vector(self.x - other.x,
+                          self.y - other.y,
+                          self.z - other.z)
+        else:
+            raise NotImplemented()
+
+    def __eq__(self, other):
+        return isinstance(other, Vector) and self.x == other.x and self.y == other.y and self.z == other.z
 
     def __str__(self):
         return "Vector<[{},{},{}]>".format(self.x, self.y, self.z)
@@ -31,13 +43,25 @@ class Vector:
     def x(self):
         return self._npa[0]
 
+    @x.setter
+    def x(self, value):
+        self._npa[0] = value
+
     @property
     def y(self):
         return self._npa[1]
 
+    @y.setter
+    def y(self, value):
+        self._npa[1] = value
+
     @property
     def z(self):
         return self._npa[2]
+
+    @z.setter
+    def z(self, value):
+        self._npa[2] = value
 
     @staticmethod
     def from_dict(dict):
@@ -49,3 +73,9 @@ class Vector:
 
     def as_np_array(self):
         return self._npa
+
+    def get_angle(self, vec):
+        return atan2(vec.x - self.x, vec.y - self.y)
+
+    def distance_to(self, vec):
+        return sqrt(pow(vec.x - self.x, 2) + pow(vec.y - self.y, 2) + pow(vec.z - self.z, 2))

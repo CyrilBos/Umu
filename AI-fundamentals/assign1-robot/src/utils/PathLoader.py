@@ -1,9 +1,8 @@
 import json
-from maths import Vector
-from maths import Quaternion
+from model import Vector, Quaternion
 
 
-class Path:
+class PathLoader:
     def __init__(self, filename):
         # Load the path from a file and convert it into a list of coordinates
         self.loadPath(filename)
@@ -15,15 +14,20 @@ class Path:
 
         self.path = data
 
-    def positionPath(self, dict=False):
+    def positionPath(self, dict=False, timestamps=False):
         if dict:
             return [{'X': p['Pose']['Position']['X'],
                      'Y': p['Pose']['Position']['Y'],
                      'Z': p['Pose']['Position']['Z']}
                     for p in self.path]
         else:
-            return [Vector.from_dict(p['Pose']['Position'])
-                    for p in self.path]
+            if timestamps:
+                return [(Vector.from_dict(p['Pose']['Position']), p['Timestamp'])
+                        for p in self.path]
+            else:
+                return [Vector.from_dict(p['Pose']['Position'])
+                        for p in self.path]
+
 
     def orientationPath(self, dict=False):
         if dict:

@@ -1,8 +1,5 @@
 import unittest
 
-from maths import Vector
-from maths import Quaternion
-
 from lokarriaexample import qmult, conjugate, rotate
 from path import Path
 
@@ -14,7 +11,7 @@ def are_quat_dict_equal(quat, quat_dict):
     return quat.x == quat_dict['X'] and quat.y == quat_dict['Y'] and quat.z == quat_dict['Z'] and quat.w == quat_dict['W']
 
 class TestMathsModule(unittest.TestCase):
-    p = Path('Path-around-table-and-back.json')
+    p = Path('PathLoader-around-table-and-back.json')
     vect_dicts = p.positionPath(dict=True)
     vects = p.positionPath()
     quat_dicts = p.orientationPath(dict=True)

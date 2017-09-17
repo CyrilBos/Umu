@@ -6,90 +6,53 @@ Author: Erik Billing (billing@cs.umu.se)
 
 Updated by Ola Ringdahl 204-09-11
 """
-
-MRDS_URL = 'localhost:50000'
-
-import http.client, json, time
-from math import sin, cos, pi, atan2
-from maths import Vector
-from maths import Quaternion
-
-HEADERS = {"Content-type": "application/json", "Accept": "text/json"}
+import sys
 
 
-class UnexpectedResponse(Exception): pass
+import time
+from model import Vector,Quaternion
+from utils import PathLoader
+from controller import Controller
 
 
-def postSpeed(angularSpeed, linearSpeed):
-    """Sends a speed command to the MRDS server"""
-    mrds = http.client.HTTPConnection(MRDS_URL)
-    params = json.dumps({'TargetAngularSpeed': angularSpeed, 'TargetLinearSpeed': linearSpeed})
-    mrds.request('POST', '/lokarria/differentialdrive', params, HEADERS)
-    response = mrds.getresponse()
-    status = response.status
-    # response.close()
-    if status == 204:
-        return response
-    else:
-        raise UnexpectedResponse(response)
+path_filename = 'paths/Path-around-table-and-back.json'
 
-
-def getLaser():
-    """Requests the current laser scan from the MRDS server and parses it into a dict"""
-    mrds = http.client.HTTPConnection(MRDS_URL)
-    mrds.request('GET', '/lokarria/laser/echoes')
-    response = mrds.getresponse()
-    if (response.status == 200):
-        laserData = response.read()
-        response.close()
-        return json.loads(laserData)
-    else:
-        return response
-
-
-def getLaserAngles():
-    """Requests the current laser properties from the MRDS server and parses it into a dict"""
-    mrds = http.client.HTTPConnection(MRDS_URL)
-    mrds.request('GET', '/lokarria/laser/properties')
-    response = mrds.getresponse()
-    if (response.status == 200):
-        laserData = response.read()
-        response.close()
-        properties = json.loads(laserData)
-        beamCount = int((properties['EndAngle'] - properties['StartAngle']) / properties['AngleIncrement'])
-        a = properties['StartAngle']  # +properties['AngleIncrement']
-        angles = []
-        while a <= properties['EndAngle']:
-            angles.append(a)
-            a += pi / 180  # properties['AngleIncrement']
-        # angles.append(properties['EndAngle']-properties['AngleIncrement']/2)
-        return angles
-    else:
-        raise UnexpectedResponse(response)
-
-
-def getPoseAndOrientation():
-    """Reads the current position and orientation from the MRDS"""
-    mrds = http.client.HTTPConnection(MRDS_URL)
-    mrds.request('GET', '/lokarria/localization')
-    response = mrds.getresponse()
-    if (response.status == 200):
-        poseData = json.loads(response.read())
-        response.close()
-        return Vector.from_dict(poseData['Pose']['Position']), Quaternion.from_dict(poseData['Pose']['Orientation'])
-    else:
-        return UnexpectedResponse(response)
+mrds_url = 'localhost:50000'
+headers = {"Content-type": "application/json", "Accept": "text/json"}
 
 
 if __name__ == '__main__':
-    print('Sending commands to MRDS server', MRDS_URL)
+    if len(sys.argv) > 1:
+        path_filename = sys.argv[1]
+
+    try:
+        print('Loading path: filename', path_filename)
+        path_loader = PathLoader(path_filename)
+    except Exception as ex:
+        print('Failed to load path {}. Exiting'.format(path_filename), ex)
+        exit()
+
+    pos_path = path_loader.positionPath(timestamps=True)
+    rot_path = path_loader.orientationPath()
+
+    controller = Controller(mrds_url, headers)
+
+    print('Sending commands to MRDS server', mrds_url)
+    begin_time = time.time()
+
+    controller.pure_pursuit(pos_path)
+
+    end_time = time.time()
+
+    print('Path done in {}'.format(end_time - begin_time))
+
+    """
     try:
         print('Telling the robot to go streight ahead.')
         response = postSpeed(0, 0.1)
-        print('Waiting for a while...')
-        time.sleep(3)
+
         print('Telling the robot to go in a circle.')
-        response = postSpeed(0.4, 0.1)
+
     except UnexpectedResponse as ex:
         print('Unexpected response from server when sending speed commands:', ex)
 
@@ -109,9 +72,8 @@ if __name__ == '__main__':
         print('Current position: ', pose)
         print('Current orientation: ', orientation)
         for t in range(30):
-            pose, orientation = getPoseAndOrientation()
-            heading = orientation.heading()
-            print('Current heading vector: X:{}, Y:{}'.format(heading.x, heading.y))
+
             time.sleep(1)
     except UnexpectedResponse as ex:
         print('Unexpected response from server when reading position:', ex)
+    """
