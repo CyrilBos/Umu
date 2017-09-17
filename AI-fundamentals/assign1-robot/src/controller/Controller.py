@@ -44,7 +44,6 @@ class Controller:
         else:
             raise self.UnexpectedResponse(response)
 
-
     def get_pos_and_orientation(self):
         """Reads the current position and orientation from the MRDS"""
         self.__mrds.request('GET', '/lokarria/localization')
@@ -57,7 +56,6 @@ class Controller:
         else:
             raise self.UnexpectedResponse(response)
 
-
     def get_laser_scan(self):
         """Requests the current laser scan from the MRDS server and parses it into a dict"""
         self.__mrds.request('GET', '/lokarria/laser/echoes')
@@ -65,7 +63,7 @@ class Controller:
         if response.status == 200:
             laser_data = response.read()
             response.close()
-            return json.loads(laser_data)
+            return json.loads(laser_data)['Echoes']
         else:
             return self.UnexpectedResponse(response)
 
@@ -88,11 +86,33 @@ class Controller:
         else:
             raise self.UnexpectedResponse(response)
 
-    def pure_pursuit(self, pos_path, step=10, delta_pos=0.1):
-        for i in range(0, len(pos_path), step):
+    def next_optimized_waypoint(self, pos_path):
+        min_ind = -1
+        for i in range(len(pos_path)):
             cur_pos, cur_rot = self.get_pos_and_orientation()
-            cur_time = pos_path[i-step][1]
-            tar_pos  = pos_path[i][0]
+            tar_pos = pos_path[i][0]
+
+            lasers_angles = self.get_laser_scan_angles()
+            lasers = self.get_laser_scan()
+
+            tar_angle = atan2(tar_pos.y - cur_pos.y, tar_pos.x - cur_pos.x)
+            for j in range(len(lasers_angles)):
+                dist = tar_angle - lasers_angles[j]
+                if min_ind == -1 or dist < min:
+                    min = dist
+                    min_ind = j
+            if lasers[min_ind] < cur_pos.distance_to(tar_pos):
+                return i - 1
+        return len(pos_path)-1
+
+    def pure_pursuit(self, pos_path, step=10, delta_pos=0.1):
+        i = 0
+        while (i < len(pos_path)):
+            i = self.next_optimized_waypoint(pos_path)
+            print(i)
+            cur_pos, cur_rot = self.get_pos_and_orientation()
+            cur_time = pos_path[i - step][1]
+            tar_pos = pos_path[i][0]
             tar_time = pos_path[i][1]
 
             print('Target position: {}'.format(tar_pos))
@@ -101,32 +121,30 @@ class Controller:
             angle = 2 * atan2(cur_rot.z, cur_rot.w)
             print('Angle: {}'.format(angle))
 
-            rcs_tar_pos = Vector(0,0,tar_pos.z)
+            rcs_tar_pos = Vector(0, 0, tar_pos.z)
             rcs_tar_pos.x = (tar_pos.x - cur_pos.x) * cos(angle) + (tar_pos.y - cur_pos.y) * sin(angle)
             rcs_tar_pos.y = ((tar_pos.y - cur_pos.y) - (rcs_tar_pos.x * sin(angle))) / cos(angle)
 
-            lin_spd = 0.75#cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
+            lin_spd = 0.5  # cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
             ang_spd = lin_spd / ((pow(rcs_tar_pos.x, 2) + pow(rcs_tar_pos.y, 2)) / (2 * rcs_tar_pos.y))
 
             print('Angular speed: {}'.format(ang_spd))
 
-            slp_dur = delta_pos/(lin_spd*1000)
+            slp_dur = delta_pos / lin_spd
             try:
                 response = self.post_speed(ang_spd, lin_spd)
                 sleep(slp_dur)
                 cur_pos = self.get_pos()
                 sleep(slp_dur)
-                while pow(cur_pos.distance_to(tar_pos), 2) > delta_pos:
+                while pow(cur_pos.distance_to(tar_pos), 2) > delta_pos: #why pow2?
                     cur_pos = self.get_pos()
                     sleep(slp_dur)
 
             except self.UnexpectedResponse as ex:
                 print('Unexpected response from server when sending speed commands:', ex)
+            i+=1
 
         self.stop()
-
-
-
 
         """
         for i in range(len(pos_path)):
