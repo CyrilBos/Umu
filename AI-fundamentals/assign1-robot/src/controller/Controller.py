@@ -146,21 +146,6 @@ class Controller:
 
         self.stop()
 
-        """
-        for i in range(len(pos_path)):
-            cur_pos, cur_rot = self.get_pose_and_heading()
-            cur_heading = cur_rot.heading()
-            tar_rot = rot_path[0].heading()
-            while cur_rot != tar_rot:
-                self.rotate_to(tar_rot)
-                while cur_pos != pos_path[i]:
-                    print('Current position: {}\nTarget position: {}'.format(cur_pos, pos_path[i]))
-                    try:
-                        response = self.post_speed(0.0, 0.4)
-                        cur_pos, cur_rot = self.get_pose_and_heading()
-                    except self.UnexpectedResponse as ex:
-                        print('Unexpected response from server when sending speed commands:', ex)
-        """
 
     def stop(self):
         self.post_speed(0, 0)
