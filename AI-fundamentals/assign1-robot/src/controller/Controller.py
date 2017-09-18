@@ -34,7 +34,7 @@ class Controller:
             raise self.UnexpectedResponse(response)
 
     def get_pos(self):
-        """Reads the current position and orientation from the MRDS"""
+        """Reads the current position from the MRDS"""
         self.__mrds.request('GET', '/lokarria/localization')
         response = self.__mrds.getresponse()
         if response.status == 200:
@@ -89,29 +89,32 @@ class Controller:
     def next_optimized_waypoint(self, pos_path):
         min_ind = -1
         for i in range(len(pos_path)):
-            cur_pos, cur_rot = self.get_pos_and_orientation()
+            cur_pos = self.get_pos()
             tar_pos = pos_path[i][0]
 
             lasers_angles = self.get_laser_scan_angles()
             lasers = self.get_laser_scan()
 
             tar_angle = atan2(tar_pos.y - cur_pos.y, tar_pos.x - cur_pos.x)
-            for j in range(len(lasers_angles)):
+            min_ind = 0
+            min = tar_angle - lasers_angles[0]
+            for j in range(1, len(lasers_angles)):
                 dist = tar_angle - lasers_angles[j]
-                if min_ind == -1 or dist < min:
+                if dist < min:
                     min = dist
                     min_ind = j
             if lasers[min_ind] < cur_pos.distance_to(tar_pos):
                 return i - 1
         return len(pos_path)-1
 
-    def pure_pursuit(self, pos_path, step=10, delta_pos=0.1):
+    def pure_pursuit(self, pos_path, delta_pos=0.1):
         i = 0
         while (i < len(pos_path)):
             i = self.next_optimized_waypoint(pos_path)
+
             print(i)
             cur_pos, cur_rot = self.get_pos_and_orientation()
-            cur_time = pos_path[i - step][1]
+            cur_time = pos_path[i][1]
             tar_pos = pos_path[i][0]
             tar_time = pos_path[i][1]
 
@@ -125,7 +128,7 @@ class Controller:
             rcs_tar_pos.x = (tar_pos.x - cur_pos.x) * cos(angle) + (tar_pos.y - cur_pos.y) * sin(angle)
             rcs_tar_pos.y = ((tar_pos.y - cur_pos.y) - (rcs_tar_pos.x * sin(angle))) / cos(angle)
 
-            lin_spd = 0.5  # cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
+            lin_spd = 0.75  # cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
             ang_spd = lin_spd / ((pow(rcs_tar_pos.x, 2) + pow(rcs_tar_pos.y, 2)) / (2 * rcs_tar_pos.y))
 
             print('Angular speed: {}'.format(ang_spd))
