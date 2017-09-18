@@ -86,37 +86,37 @@ class Controller:
         else:
             raise self.UnexpectedResponse(response)
 
-    def next_optimized_waypoint(self, pos_path):
-        min_ind = -1
-        for i in range(len(pos_path)):
+    def next_optimized_waypoint(self, pos_path, cur_i):
+        lasers_angles = self.get_laser_scan_angles()
+        lasers = self.get_laser_scan()
+
+        for i in range(cur_i, len(pos_path)):
             cur_pos = self.get_pos()
             tar_pos = pos_path[i][0]
 
-            lasers_angles = self.get_laser_scan_angles()
-            lasers = self.get_laser_scan()
-
-            tar_angle = atan2(tar_pos.y - cur_pos.y, tar_pos.x - cur_pos.x)
+            tar_angle = atan2(cur_pos.cross(tar_pos), cur_pos.dot(tar_pos))
             min_ind = 0
             min = tar_angle - lasers_angles[0]
+            #search for the nearest angle in laser_angles
+            #could be simplified with a calculation instead of this iteration
             for j in range(1, len(lasers_angles)):
                 dist = tar_angle - lasers_angles[j]
                 if dist < min:
                     min = dist
                     min_ind = j
             if lasers[min_ind] < cur_pos.distance_to(tar_pos):
+                #if the laser hits an obstacle, return the index of the previous position on the path
                 return i - 1
         return len(pos_path)-1
 
     def pure_pursuit(self, pos_path, delta_pos=0.1):
         i = 0
         while (i < len(pos_path)):
-            i = self.next_optimized_waypoint(pos_path)
+            i = self.next_optimized_waypoint(pos_path, i)
 
             print(i)
             cur_pos, cur_rot = self.get_pos_and_orientation()
-            cur_time = pos_path[i][1]
-            tar_pos = pos_path[i][0]
-            tar_time = pos_path[i][1]
+            tar_pos = pos_path[i]
 
             print('Target position: {}'.format(tar_pos))
             print('Current position: {}'.format(cur_pos))
@@ -125,21 +125,28 @@ class Controller:
             print('Angle: {}'.format(angle))
 
             rcs_tar_pos = Vector(0, 0, tar_pos.z)
+
+
+            #GP_x
             rcs_tar_pos.x = (tar_pos.x - cur_pos.x) * cos(angle) + (tar_pos.y - cur_pos.y) * sin(angle)
+            #GP_y
             rcs_tar_pos.y = ((tar_pos.y - cur_pos.y) - (rcs_tar_pos.x * sin(angle))) / cos(angle)
 
-            lin_spd = 0.75  # cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
+            lin_spd = 0.75
+
+            #ang_spd = lin_spd / (l^2 / 2y) = lin_spd / r
             ang_spd = lin_spd / ((pow(rcs_tar_pos.x, 2) + pow(rcs_tar_pos.y, 2)) / (2 * rcs_tar_pos.y))
 
             print('Angular speed: {}'.format(ang_spd))
 
+            #sleep duration between each request = time to travel distance delta_min  at speed lin_spd
             slp_dur = delta_pos / lin_spd
             try:
-                response = self.post_speed(ang_spd, lin_spd)
+                self.post_speed(ang_spd, lin_spd)
                 sleep(slp_dur)
                 cur_pos = self.get_pos()
                 sleep(slp_dur)
-                while pow(cur_pos.distance_to(tar_pos), 2) > delta_pos: #why pow2?
+                while pow(cur_pos.distance_to(tar_pos), 2) > delta_pos: #@Dorian why pow2?
                     cur_pos = self.get_pos()
                     sleep(slp_dur)
 
