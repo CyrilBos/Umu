@@ -91,10 +91,15 @@ class Controller:
         lasers = self.get_laser_scan()
 
         for i in range(cur_i, len(pos_path)):
-            cur_pos = self.get_pos()
-            tar_pos = pos_path[i][0]
+            cur_pos, cur_rot = self.get_pos_and_orientation()
+            tar_pos = pos_path[i]
 
-            tar_angle = atan2(cur_pos.cross(tar_pos), cur_pos.dot(tar_pos))
+            rcs_tar_pos = self.convert_to_rcs(cur_pos, cur_rot, tar_pos)
+
+            rcs_origin = Vector(0,0,0)
+
+            tar_angle = rcs_origin.get_angle(rcs_tar_pos)
+
             min_ind = 0
             min = tar_angle - lasers_angles[0]
             #search for the nearest angle in laser_angles
@@ -104,10 +109,23 @@ class Controller:
                 if dist < min:
                     min = dist
                     min_ind = j
+
             if lasers[min_ind] < cur_pos.distance_to(tar_pos):
                 #if the laser hits an obstacle, return the index of the previous position on the path
                 return i - 1
         return len(pos_path)-1
+
+
+    def convert_to_rcs(self, cur_pos, cur_rot, tar_pos):
+        angle = 2 * atan2(cur_rot.z, cur_rot.w)
+        rcs_tar_pos = Vector(0, 0, tar_pos.z)
+
+        # GP_x
+        rcs_tar_pos.x = (tar_pos.x - cur_pos.x) * cos(angle) + (tar_pos.y - cur_pos.y) * sin(angle)
+        # GP_y
+        rcs_tar_pos.y = -(tar_pos.x - cur_pos.x) * sin(angle) + (tar_pos.y - cur_pos.y) * cos(angle)
+        return rcs_tar_pos
+
 
     def pure_pursuit(self, pos_path, delta_pos=0.1):
         i = 0
@@ -121,18 +139,11 @@ class Controller:
             print('Target position: {}'.format(tar_pos))
             print('Current position: {}'.format(cur_pos))
 
-            angle = 2 * atan2(cur_rot.z, cur_rot.w)
-            print('Angle: {}'.format(angle))
 
-            rcs_tar_pos = Vector(0, 0, tar_pos.z)
+            rcs_tar_pos = self.convert_to_rcs(cur_pos, cur_rot, tar_pos)
 
 
-            #GP_x
-            rcs_tar_pos.x = (tar_pos.x - cur_pos.x) * cos(angle) + (tar_pos.y - cur_pos.y) * sin(angle)
-            #GP_y
-            rcs_tar_pos.y = ((tar_pos.y - cur_pos.y) - (rcs_tar_pos.x * sin(angle))) / cos(angle)
-
-            lin_spd = 0.75
+            lin_spd = 0.5
 
             #ang_spd = lin_spd / (l^2 / 2y) = lin_spd / r
             ang_spd = lin_spd / ((pow(rcs_tar_pos.x, 2) + pow(rcs_tar_pos.y, 2)) / (2 * rcs_tar_pos.y))

@@ -32,7 +32,7 @@ if __name__ == '__main__':
         print('Failed to load path {}. Exiting'.format(path_filename), ex)
         exit()
 
-    pos_path = path_loader.positionPath(timestamps=True)
+    pos_path = path_loader.positionPath(timestamps=False)
     rot_path = path_loader.orientationPath()
 
     controller = Controller(mrds_url, headers)
