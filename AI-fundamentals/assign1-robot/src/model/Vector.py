@@ -79,3 +79,17 @@ class Vector:
 
     def distance_to(self, vec):
         return sqrt(pow(vec.x - self.x, 2) + pow(vec.y - self.y, 2) + pow(vec.z - self.z, 2))
+
+    def cross(self, vec):
+        """
+        Computes cross product of self by vec
+        :type vec: Vector
+        """
+        return numpy.cross(self.as_np_array(), vec.as_np_array())
+
+    def dot(self, vec):
+        """
+        Computes dot product of self by vec
+        :type vec: Vector
+        """
+        return numpy.dot(self.as_np_array(), vec.as_np_array())

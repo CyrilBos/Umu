@@ -1,4 +1,3 @@
-
 import numpy
 
 from .Vector import Vector
@@ -9,7 +8,7 @@ class Quaternion:
 
     def __init__(self, w, vector):
         if not isinstance(vector, Vector):
-            raise(TypeError('Parameter vector of init is not a vector'))
+            raise (TypeError('Parameter vector of init is not a vector'))
         self.__unit_vector = vector
         self.__w = w
 
@@ -27,12 +26,10 @@ class Quaternion:
         if isinstance(other, Quaternion):
             return Quaternion(self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z,
                               Vector(self.__w * other.x + self.x * other.w + self.y * other.z - self.z * other.y,
-                              self.__w * other.y - self.x * other.z + self.y * other.w + self.z * other.x,
-                              self.__w * other.z + self.x * other.y - self.y * other.x + self.z * other.w))
+                                     self.__w * other.y - self.x * other.z + self.y * other.w + self.z * other.x,
+                                     self.__w * other.z + self.x * other.y - self.y * other.x + self.z * other.w))
         else:
             raise TypeError('trying to multiply a quaternion by something else than a quaternion or a vector')
-
-
 
     def __rmul__(self, other):
         return self.__mul__(other)
@@ -61,9 +58,9 @@ class Quaternion:
         return self.__w
 
     @staticmethod
-    def from_two_vectors(cls, u, v):
+    def from_two_vectors(u, v):
         w = numpy.cross(u.as_np_array(), v.as_np_array())
-        q = cls(1. + u * v, w[0], w[1], w[2])
+        q = Quaternion(1. + u * v, Vector(w[0], w[1], w[2]))
         return q.normalize()
 
     @staticmethod
