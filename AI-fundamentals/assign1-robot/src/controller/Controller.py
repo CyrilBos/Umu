@@ -98,14 +98,18 @@ class Controller:
             print('Target position: {}'.format(tar_pos))
             print('Current position: {}'.format(cur_pos))
 
-            angle = 2 * atan2(cur_rot.z, cur_rot.w)
+
+            #angle = 2 * atan2(cur_rot.z, cur_rot.w)
+            q = Quaternion(cur_rot.w,Vector(0,0,cur_rot.z)).heading()
+            angle = atan2(q.y,q.x)
             print('Angle: {}'.format(angle))
 
             rcs_tar_pos = Vector(0,0,tar_pos.z)
             rcs_tar_pos.x = (tar_pos.x - cur_pos.x) * cos(angle) + (tar_pos.y - cur_pos.y) * sin(angle)
-            rcs_tar_pos.y = ((tar_pos.y - cur_pos.y) - (rcs_tar_pos.x * sin(angle))) / cos(angle)
+            #rcs_tar_pos.y = ((tar_pos.y - cur_pos.y) - (rcs_tar_pos.x * sin(angle))) / cos(angle)
+            rcs_tar_pos.y = -(tar_pos.x - cur_pos.x) * sin(angle) + (tar_pos.y - cur_pos.y) * cos(angle)
 
-            lin_spd = 0.75#cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
+            lin_spd = 0.5#cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
             ang_spd = lin_spd / ((pow(rcs_tar_pos.x, 2) + pow(rcs_tar_pos.y, 2)) / (2 * rcs_tar_pos.y))
 
             print('Angular speed: {}'.format(ang_spd))

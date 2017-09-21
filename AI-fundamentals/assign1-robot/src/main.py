@@ -15,7 +15,7 @@ from utils import PathLoader
 from controller import Controller
 
 
-path_filename = 'paths/Path-around-table-and-back.json'
+path_filename = 'paths/Path-around-table.json'
 
 mrds_url = 'localhost:50000'
 headers = {"Content-type": "application/json", "Accept": "text/json"}
