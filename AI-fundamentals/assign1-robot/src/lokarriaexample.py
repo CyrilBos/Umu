@@ -78,12 +78,12 @@ def getPose():
     else:
         return UnexpectedResponse(response)
 
-def getBearing():
+def getHeading():
     """Returns the XY Orientation as a bearing unit vector"""
-    return bearing(getPose()['Pose']['Orientation'])
+    return heading(getPose()['Pose']['Orientation'])
 
 
-def bearing(q):
+def heading(q):
     return rotate(q, {'X': 1.0, 'Y': 0.0, "Z": 0.0})
 
 
@@ -151,7 +151,7 @@ if __name__ == '__main__':
         pose = getPose()
         print('Current position: ', pose['Pose']['Position'])
         for t in range(30):
-            print('Current heading vector: X:{X:.3}, Y:{Y:.3}'.format(**getBearing()))
+            print('Current heading vector: X:{X:.3}, Y:{Y:.3}'.format(**getHeading()))
             time.sleep(1)
     except UnexpectedResponse as ex:
         print('Unexpected response from server when reading position:', ex)

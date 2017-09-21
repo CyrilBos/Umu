@@ -1,7 +1,7 @@
 import unittest
 
-from lokarriaexample import qmult, conjugate, rotate
-from path import Path
+from lokarriaexample import qmult, conjugate, rotate, heading
+from utils import PathLoader
 
 
 def are_vect_dict_equal(quat, quat_dict):
@@ -11,7 +11,7 @@ def are_quat_dict_equal(quat, quat_dict):
     return quat.x == quat_dict['X'] and quat.y == quat_dict['Y'] and quat.z == quat_dict['Z'] and quat.w == quat_dict['W']
 
 class TestMathsModule(unittest.TestCase):
-    p = Path('PathLoader-around-table-and-back.json')
+    p = PathLoader('paths/Path-around-table-and-back.json')
     vect_dicts = p.positionPath(dict=True)
     vects = p.positionPath()
     quat_dicts = p.orientationPath(dict=True)
@@ -19,15 +19,9 @@ class TestMathsModule(unittest.TestCase):
 
     def test_loading(self):
         for i in range(len(self.quats)):
-            if not are_quat_dict_equal(self.quats[i], self.quat_dicts[i]):
-                print(i)
-                print(self.quats[i])
-                print(self.quat_dicts[i])
-                self.assertTrue(False)
+            self.assertTrue(are_quat_dict_equal(self.quats[i], self.quat_dicts[i]))
         for i in range(len(self.vects)):
-            if not are_vect_dict_equal(self.vects[i], self.vect_dicts[i]):
-                self.assertTrue(False)
-        self.assertTrue(True)
+            self.assertTrue(are_vect_dict_equal(self.vects[i], self.vect_dicts[i]))
 
     def test_conjugation(self):
         self.assertTrue(are_quat_dict_equal(self.quats[0].conjugate(), conjugate(self.quat_dicts[0])))
@@ -37,6 +31,9 @@ class TestMathsModule(unittest.TestCase):
 
     def test_rotation(self):
         self.assertTrue(are_vect_dict_equal(self.quats[0].rotate(self.vects[0]), rotate(self.quat_dicts[0], self.vect_dicts[0])))
+
+    def test_heading(self):
+        self.assertTrue(are_vect_dict_equal(self.quats[0].heading(), heading(self.quat_dicts[0])))
 
 if __name__ == '__main__':
     unittest.main()
