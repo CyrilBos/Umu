@@ -86,13 +86,20 @@ class Controller:
         else:
             raise self.UnexpectedResponse(response)
 
-    def travel(self, cur_pos, tar_pos, lin_spd, ang_spd, delta_pos=0.1):
-        """Routine to travel at given speed to aimed position until nearby enough. at given speeds at given speeds """
+    def travel(self, cur_pos, tar_pos, lin_spd, ang_spd, delta_pos=1.0):
+        """
+        Routine to travel at given speed to targeted position until nearby enough. at given speeds at given speeds
+        :param cur_pos: current position of the robot
+        :type cur_pos: Vector
+        :param tar_pos: targeted position to travel to
+        :type lin_spd:
+
+        """
         slp_dur = delta_pos / (lin_spd * 1000)
+        response = self.post_speed(ang_spd, lin_spd)
+        sleep(slp_dur)
         try:
-            while pow(cur_pos.distance_to(tar_pos), 2) > delta_pos:
-                response = self.post_speed(ang_spd, lin_spd)
-                sleep(slp_dur)
+            while cur_pos.distance_to(tar_pos) > delta_pos:
                 cur_pos = self.get_pos()
                 sleep(slp_dur)
 
@@ -108,10 +115,10 @@ class Controller:
         # cur_time = pos_path[i-step][1]
         # tar_time = pos_path[i][1]
         # return cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
-        return 0.5
+        return 1
 
 
-    def fixed_pure_pursuit(self, pos_path, step=5):
+    def fixed_pure_pursuit(self, pos_path, step=10):
         """
             Implements the pure pursuit algorithm with a fixed lookahead (step parameter).
             The robot aims for "step" position ahead on the path.
