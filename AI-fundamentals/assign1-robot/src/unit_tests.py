@@ -1,7 +1,7 @@
 import unittest
 
 from lokarriaexample import qmult, conjugate, rotate, heading
-from utils import PathLoader
+from controller import PathLoader
 
 
 def are_vect_dict_equal(quat, quat_dict):
