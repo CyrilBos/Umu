@@ -3,7 +3,9 @@ import json
 from math import atan2, cos, sin, pow, sqrt, pi
 from time import sleep
 
-from model import Vector, Quaternion, PurePursuit
+from model import Vector, Quaternion
+from model import pure_pursuit
+
 
 
 class Controller:
@@ -106,7 +108,6 @@ class Controller:
         except self.UnexpectedResponse as ex:
             print('Unexpected response from server when sending speed commands:', ex)
 
-        self.stop()
 
     def get_lin_spd(self):#, cur_time, tar_time, cur_pos, tar_pos):
         """
@@ -115,7 +116,7 @@ class Controller:
         # cur_time = pos_path[i-step][1]
         # tar_time = pos_path[i][1]
         # return cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
-        return 1
+        return 0.5
 
 
     def fixed_pure_pursuit(self, pos_path, step=10):
@@ -134,10 +135,11 @@ class Controller:
             # lin_spd = cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
             lin_spd = self.get_lin_spd()
             cur_pos, cur_rot = self.get_pos_and_orientation()
-            self.travel(cur_pos, pos_path[i], lin_spd, PurePursuit.get_ang_spd(cur_pos, cur_rot, pos_path[i], lin_spd))
+            self.travel(cur_pos, pos_path[i], lin_spd, pure_pursuit.get_ang_spd(cur_pos, cur_rot, pos_path[i], lin_spd))
+        self.stop()
 
 
-    def optimized_pure_pursuit(self, pos_path):
+    def optimized_pure_pursuit(self, pos_path, destination_delta=1):
         """
             Implements the pure pursuit algorithm using obstacle detection to aim for the furthest position possible.
 
@@ -146,14 +148,18 @@ class Controller:
             :type pos_path: list
             :
         """
+        old_i = 0
         i = 0
-        while (i < len(pos_path)):
+        cur_pos, cur_rot = self.get_pos_and_orientation()
+        last_pos_index = len(pos_path)-1
+        while i < last_pos_index:# cur_pos.distance_to(pos_path[last_pos_index]) > destination_delta
             cur_pos, cur_rot = self.get_pos_and_orientation()
             i = self.next_optimized_waypoint(cur_pos, cur_rot, pos_path, i)
-
             print("Target position path index: {}".format(i))
             lin_spd = self.get_lin_spd()
-            self.travel(cur_pos, pos_path[i], lin_spd, PurePursuit.get_pure_pursuit_ang_spd(cur_pos, cur_rot, pos_path[i], lin_spd))
+            self.travel(cur_pos, pos_path[i], lin_spd, pure_pursuit.get_ang_spd(cur_pos, cur_rot, pos_path[i], lin_spd),
+                        delta_pos=1)
+        self.stop()
 
 
     def next_optimized_waypoint(self, cur_pos, cur_rot, pos_path, cur_i):
@@ -171,7 +177,7 @@ class Controller:
         for i in range(cur_i, len(pos_path)):
             tar_pos = pos_path[i]
 
-            rcs_tar_pos = tar_pos.convert_to_rcs(cur_pos, cur_rot)
+            rcs_tar_pos = pure_pursuit.convert_to_rcs(tar_pos, cur_pos, cur_rot)
 
             rcs_origin = Vector(0, 0, 0)
 

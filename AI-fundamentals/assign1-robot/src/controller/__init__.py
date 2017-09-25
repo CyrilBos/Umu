@@ -1,2 +1,2 @@
-from .Controller import Controller
-from .PathLoader import PathLoader
+from .controller import Controller
+from .path_loader import PathLoader

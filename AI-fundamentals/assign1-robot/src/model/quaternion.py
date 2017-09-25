@@ -1,6 +1,6 @@
 import numpy
 
-from .Vector import Vector
+from .vector import Vector
 
 
 class Quaternion:

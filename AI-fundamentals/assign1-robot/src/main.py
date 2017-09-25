@@ -23,14 +23,18 @@ mrds_url = 'localhost:50000'
 headers = {"Content-type": "application/json", "Accept": "text/json"}
 
 if __name__ == '__main__':
-    opt_list, args = getopt.getopt(sys.argv, '-optimized', ['path='])
-    for name, value in opt_list:
-        if name == 'path=':
-            path_filename = value
-
-    for arg in args:
-        if arg == '-optimized':
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], '', ['path=', 'optimized'])
+    except getopt.GetoptError as err:
+        print(err)
+        sys.exit(2)
+    print(opts)
+    print(args)
+    for name, value in opts:
+        if name == 'optimized':
             optimize_path = True
+        if name == '--path':
+            path_filename = value
 
     try:
         print('Loading path: filename', path_filename)
@@ -39,10 +43,11 @@ if __name__ == '__main__':
         print('Failed to load path {}: '.format(path_filename), ex)
         exit()
 
+    controller = Controller(mrds_url, headers)
+
     pos_path = path_loader.positionPath(timestamps=False)
     rot_path = path_loader.orientationPath()
 
-    controller = Controller(mrds_url, headers)
 
     print('Sending commands to MRDS server listening at', mrds_url)
     begin_time = time.time()
