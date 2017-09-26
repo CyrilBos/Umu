@@ -5,7 +5,6 @@ from .quaternion import Quaternion
 
 
 def convert_to_rcs(tar_pos, cur_pos, cur_rot):
-    #angle = 2 * atan2(cur_rot.z, cur_rot.w)
     q = Quaternion(cur_rot.w, Vector(0, 0, cur_rot.z)).heading()
     angle = atan2(q.y, q.x)
     rcs_pos = Vector(0, 0, tar_pos.z)

@@ -13,26 +13,13 @@ class Quaternion:
         self.__w = w
 
     def __mul__(self, other):
-        """
-                elif isinstance(other, Vector):
-                    axis = Vector(self.x, self.y, self.z)
-                    uv = axis * other
-                    uuv = axis * uv
-                    uv *= (2.0 * self.__w)
-                    uuv *= 2.0
-                    return other + uv + uuv
-                """
-
         if isinstance(other, Quaternion):
             return Quaternion(self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z,
                               Vector(self.__w * other.x + self.x * other.w + self.y * other.z - self.z * other.y,
                                      self.__w * other.y - self.x * other.z + self.y * other.w + self.z * other.x,
                                      self.__w * other.z + self.x * other.y - self.y * other.x + self.z * other.w))
         else:
-            raise TypeError('trying to multiply a quaternion by something else than a quaternion or a vector')
-
-    def __rmul__(self, other):
-        return self.__mul__(other)
+            raise TypeError('trying to multiply a quaternion by something else than a quaternion')
 
     def __str__(self):
         return "Quaternion<{}, [{},{},{}]>".format(self.w, self.x, self.y, self.z)
