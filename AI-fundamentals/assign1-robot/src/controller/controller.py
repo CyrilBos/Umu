@@ -1,26 +1,29 @@
-import http.client
-import json
+import http.client, json
+from logging import getLogger
 from math import atan2, cos, sin, pow, sqrt, pi
 from time import sleep
 
 from model import Vector, Quaternion
 from model import pure_pursuit
 
+logger = getLogger('controller')
+
+#Headers sent with every POST speed requests
+HEADERS = {"Content-type": "application/json", "Accept": "text/json"}
 
 class Controller:
     """
         This is the Controller base class containing methods to send requests to the MRDS server
     """
+
     class UnexpectedResponse(Exception):
         pass
 
-    def __init__(self, mrds_url, headers, lin_spd=1.0, delta_pos=0.75):
+    def __init__(self, mrds_url, lin_spd=1.0, delta_pos=0.75):
         """
             Initializes a new instance of Controller.
             :param mrds_url: url which the MRDS server listens on
             :type mrds_url: str
-            :param headers: headers to send with every request sent to the MRDS server
-            :type headers: str
             :param lin_spd:
             :type lin_spd: float
             :param step:
@@ -30,7 +33,6 @@ class Controller:
 
         """
         self.__mrds = http.client.HTTPConnection(mrds_url)
-        self.__headers = headers
         self._lin_spd = lin_spd
         self._delta_pos = delta_pos
 
@@ -44,7 +46,7 @@ class Controller:
         :type linear_speed: float
         """
         params = json.dumps({'TargetAngularSpeed': angular_speed, 'TargetLinearSpeed': linear_speed})
-        self.__mrds.request('POST', '/lokarria/differentialdrive', params, self.__headers)
+        self.__mrds.request('POST', '/lokarria/differentialdrive', params, HEADERS)
         response = self.__mrds.getresponse()
         status = response.status
         response.close()
@@ -65,7 +67,7 @@ class Controller:
             raise self.UnexpectedResponse(response)
 
     def get_pos_and_orientation(self):
-        """Reads the current position and orientation from the MRDS"""
+        """Reads the current position and orientation from the MRDS server"""
         self.__mrds.request('GET', '/lokarria/localization')
         response = self.__mrds.getresponse()
         if response.status == 200:
@@ -88,7 +90,7 @@ class Controller:
             return self.UnexpectedResponse(response)
 
     def get_laser_scan_angles(self):
-        """Requests the current laser properties from the MRDS server and parses it into a dict"""
+        """Requests the current laser properties from the MRDS server and returns the list of the laser angles"""
         self.__mrds.request('GET', '/lokarria/laser/properties')
         response = self.__mrds.getresponse()
         if response.status == 200:
@@ -108,26 +110,34 @@ class Controller:
 
     def travel(self, cur_pos, tar_pos, lin_spd, ang_spd, delta_pos=1):
         """
-        Routine to travel at given speed to targeted position until nearby enough. at given speeds at given speeds
+        Routine to travel to targeted position at given linear and angular speeds until nearby enough
         :param cur_pos: current position of the robot
         :type cur_pos: Vector
         :param tar_pos: targeted position to travel to
-        :type lin_spd:
+        :type tar_pos: Vector
+        :param lin_spd: linear speed at which the robot should travel
+        :type lin_spd: float
+        :param ang_spd: angular speed at which the robot should travel
+        :type ang_spd: float
+        :param delta_pos: value which is the distance between current position.
+                          Defaults to 1 (as precised in the assignment subject)
+        :type delta_pos: float
 
         """
-        slp_dur = delta_pos / (lin_spd * 1000)
+        logger.debug(
+            'Traveling from {} to {}\n with linear speed={} and angular speed={}'.format(cur_pos, tar_pos, lin_spd,
+                                                                                         ang_spd))
+        slp_dur = delta_pos / (lin_spd) #unnecessary to monitor cur_pos more than this
         response = self.post_speed(ang_spd, lin_spd)
         sleep(slp_dur)
         try:
             while cur_pos.distance_to(tar_pos) > delta_pos:
                 cur_pos = self.get_pos()
+                logger.debug('[travel()] current position: {}')
                 sleep(slp_dur)
 
         except self.UnexpectedResponse as ex:
             print('Unexpected response from server when sending speed commands:', ex)
-
-
-
 
     def stop(self):
         self.post_speed(0, 0)
