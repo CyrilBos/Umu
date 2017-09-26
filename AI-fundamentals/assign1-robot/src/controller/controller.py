@@ -7,14 +7,32 @@ from model import Vector, Quaternion
 from model import pure_pursuit
 
 
-
 class Controller:
+    """
+        This is the Controller base class containing methods to send requests to the MRDS server
+    """
     class UnexpectedResponse(Exception):
         pass
 
-    def __init__(self, mrds_url, headers):
+    def __init__(self, mrds_url, headers, lin_spd=1.0, delta_pos=0.75):
+        """
+            Initializes a new instance of Controller.
+            :param mrds_url: url which the MRDS server listens on
+            :type mrds_url: str
+            :param headers: headers to send with every request sent to the MRDS server
+            :type headers: str
+            :param lin_spd:
+            :type lin_spd: float
+            :param step:
+            :type step: int
+            :param delta_pos:
+            :type delta_pos: float
+
+        """
         self.__mrds = http.client.HTTPConnection(mrds_url)
         self.__headers = headers
+        self._lin_spd = lin_spd
+        self._delta_pos = delta_pos
 
     def post_speed(self, angular_speed, linear_speed):
         """
@@ -88,7 +106,7 @@ class Controller:
         else:
             raise self.UnexpectedResponse(response)
 
-    def travel(self, cur_pos, tar_pos, lin_spd, ang_spd, delta_pos=1.0):
+    def travel(self, cur_pos, tar_pos, lin_spd, ang_spd, delta_pos=1):
         """
         Routine to travel at given speed to targeted position until nearby enough. at given speeds at given speeds
         :param cur_pos: current position of the robot
@@ -109,94 +127,7 @@ class Controller:
             print('Unexpected response from server when sending speed commands:', ex)
 
 
-    def get_lin_spd(self):#, cur_time, tar_time, cur_pos, tar_pos):
-        """
-            Computes the linear speed by using timestamps coded in the path
-        """
-        # cur_time = pos_path[i-step][1]
-        # tar_time = pos_path[i][1]
-        # return cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
-        return 0.5
 
-
-    def fixed_pure_pursuit(self, pos_path, step=10):
-        """
-            Implements the pure pursuit algorithm with a fixed lookahead (step parameter).
-            The robot aims for "step" position ahead on the path.
-            Various values of step and lin_spd
-            :param pos_path: list of Vector
-            :type pos_path: list
-            :param step: lookahead value, i.e the number of positions skipped
-            :type step: int
-        """
-        for i in range(0, len(pos_path), step):
-            # cur_time = pos_path[i-step][1]
-            # tar_time = pos_path[i][1]
-            # lin_spd = cur_pos.distance_to(tar_pos) / ((tar_time - cur_time) * 1000)
-            lin_spd = self.get_lin_spd()
-            cur_pos, cur_rot = self.get_pos_and_orientation()
-            self.travel(cur_pos, pos_path[i], lin_spd, pure_pursuit.get_ang_spd(cur_pos, cur_rot, pos_path[i], lin_spd))
-        self.stop()
-
-
-    def optimized_pure_pursuit(self, pos_path, destination_delta=1):
-        """
-            Implements the pure pursuit algorithm using obstacle detection to aim for the furthest position possible.
-
-            Various values of step and lin_spd
-            :param pos_path: path loaded into Vector
-            :type pos_path: list
-            :
-        """
-        old_i = 0
-        i = 0
-        cur_pos, cur_rot = self.get_pos_and_orientation()
-        last_pos_index = len(pos_path)-1
-        while i < last_pos_index:# cur_pos.distance_to(pos_path[last_pos_index]) > destination_delta
-            cur_pos, cur_rot = self.get_pos_and_orientation()
-            i = self.next_optimized_waypoint(cur_pos, cur_rot, pos_path, i)
-            print("Target position path index: {}".format(i))
-            lin_spd = self.get_lin_spd()
-            self.travel(cur_pos, pos_path[i], lin_spd, pure_pursuit.get_ang_spd(cur_pos, cur_rot, pos_path[i], lin_spd),
-                        delta_pos=1)
-        self.stop()
-
-
-    def next_optimized_waypoint(self, cur_pos, cur_rot, pos_path, cur_i):
-        """
-            Returns the furthest point from path without an obstacle. Stops at the first position where the laser of nearest
-            angle (laser angle ~= aimed position angle) detects an obstacle (laser distance < aimed position distance).
-            :param pos_path: path loadsed into Vector
-            :param type: list
-            :param step: lookahead value, i.e the number of positions skipped
-
-        """
-        lasers_angles = self.get_laser_scan_angles()
-        lasers = self.get_laser_scan()['Echoes']
-
-        for i in range(cur_i, len(pos_path)):
-            tar_pos = pos_path[i]
-
-            rcs_tar_pos = pure_pursuit.convert_to_rcs(tar_pos, cur_pos, cur_rot)
-
-            rcs_origin = Vector(0, 0, 0)
-
-            tar_angle = rcs_origin.get_angle(rcs_tar_pos)
-
-            min_ind = 0
-            min = tar_angle - lasers_angles[0]
-            # search for the nearest angle in laser_angles
-            # could be simplified with a calculation instead of this iteration
-            for j in range(1, len(lasers_angles)):
-                dist = tar_angle - lasers_angles[j]
-                if dist < min:
-                    min = dist
-                    min_ind = j
-
-            if lasers[min_ind] < cur_pos.distance_to(tar_pos):
-                # if the laser hits an obstacle, return the index of the previous position on the path
-                return i - 1
-        return len(pos_path) - 1
 
     def stop(self):
         self.post_speed(0, 0)

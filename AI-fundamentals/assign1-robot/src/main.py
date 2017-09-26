@@ -10,12 +10,12 @@ import sys
 
 import time
 from model import Vector, Quaternion
-from controller import Controller, PathLoader
+from controller import FixedController, ObstacleController, PathLoader
 
 import argparse
 
 # filename of the path to load. Can be set by --path=filename
-path_filename = 'paths/Path-around-table.json'
+path_filepath = 'paths/Path-around-table-and-back.json'
 
 # if set to True, instead of a fixed lookahead it will try to optimize as much as possible by detecting obstacles
 # can be set to true by using --optimized option as an argument of this script
@@ -25,39 +25,57 @@ optimize_path = False
 mrds_url = 'localhost:50000'
 headers = {"Content-type": "application/json", "Accept": "text/json"}
 
+# Optimized parameters for each path when using fixed lookahead pure pursuit algorithm
+#the lists respect the format [linear_speed, lookahead, delta_pos]
+#these parameters are described in FixedController class (in file controller/fixed_controller.py)
+# if using another filename, will use default values
+PARAMETERS = {
+    'Path-around-table-and-back.json': [1.5, 20, 0.5],
+    'Path-around-table.json': [1.5, 5, 0.25],
+    'Path-to-bed.json': [1, 5, 0.5],
+    'Path-from-bed.json': [1.0, 10, 0.75],
+}
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--optimized', action='store_true', default=False, help='use path optimization by detecting obstacles')
     parser.add_argument('--path', type=str, help='filename of the path to load')
+    parser.add_argument('--obstacle', action='store_true', default=False,
+                        help='use obstacle detection to optimize the path')
 
     args = parser.parse_args()
-    if args.optimized:
+    if args.obstacle:
         optimize_path = True
     if args.path:
-        path_filename = args.path
+        path_filepath = args.path
+
+    # if not placed in same folder, parses the filename of the filepath of the path
+    # used to get the optimized parameters for each path
+    if '/' in path_filepath:
+        path_filename = path_filepath[path_filepath.rindex('/')+1:]
+    else:
+        path_filename = path_filepath
 
     try:
-        print('Loading path: filename', path_filename)
-        path_loader = PathLoader(path_filename)
+        print('Loading path: filename', path_filepath)
+        path_loader = PathLoader(path_filepath)
     except Exception as ex:
-        print('Failed to load path {}: '.format(path_filename), ex)
+        print('Failed to load path {}: '.format(path_filepath), ex)
         exit()
-
-    controller = Controller(mrds_url, headers, path_filename)
 
     pos_path = path_loader.positionPath(timestamps=False)
     rot_path = path_loader.orientationPath()
 
     print('Sending commands to MRDS server listening at', mrds_url)
-    begin_time = time.time()
 
     if optimize_path:
+        controller = ObstacleController(mrds_url, headers)
         print('Starting obstacle optimized pure pursuit')
-        controller.optimized_pure_pursuit(pos_path)
     else:
+        controller = FixedController(mrds_url, headers, PARAMETERS[path_filename][0], PARAMETERS[path_filename][1], PARAMETERS[path_filename][2])
         print('Starting fixed lookahead pure pursuit')
-        controller.fixed_pure_pursuit(pos_path)
 
+    begin_time = time.time()
+    controller.pure_pursuit(pos_path)
     end_time = time.time()
 
     print('Path done in {}'.format(end_time - begin_time))
