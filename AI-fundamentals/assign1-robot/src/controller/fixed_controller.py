@@ -22,10 +22,6 @@ class FixedController(Controller):
             :param pos_path: list of Vector
             :type pos_path: list
         """
-        logger.info('Starting fixed pure pursuit')
-        print(self._lin_spd)
-        print(self._delta_pos)
-        print(self.__lookahead)
         # Travel through the path skipping "lookahead" positions every time
         for i in range(0, len(pos_path), self.__lookahead):
             cur_pos, cur_rot = self.get_pos_and_orientation()

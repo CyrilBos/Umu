@@ -24,16 +24,27 @@ path_filepath = 'paths/Path-around-table-and-back.json'
 # if set to False, the controller will skip positions with a fixed lookahead independent of the obstacle detection
 obstacle_detection = False
 
-# Optimized parameters for each path when using fixed lookahead pure pursuit algorithm
-# the lists respect the format [linear_speed, lookahead, delta_pos]
-# these parameters are described in FixedController class (in file controller/fixed_controller.py)
-# if using another filename, will use default values
+# Optimized parameters for each path
+# the lists respect the format [lin_spd, lookahead, delta_pos] when using fixed lookahead
+# otherwise for the obstacle detection the format is [linear_speed, delta_pos)
+# lin_spd (linear speed) and delta_pos parameters are described in FixedController.travel() method
+#
+# if using another filename, will use the default values of Controller.__init__
 PARAMETERS = {
-    'Path-around-table-and-back.json': [1, 5, 0.75],
-    'Path-around-table.json': [1.5, 5, 0.25],
-    'Path-to-bed.json': [1, 5, 0.75],
-    'Path-from-bed.json': [0.5, 5, 1],
+    'fixed': {
+        'Path-around-table-and-back': [1.5, 20, 0.5],
+        'Path-around-table': [1, 10, 0.75],
+        'Path-to-bed': [1, 5, 0.75],
+        'Path-from-bed': [1, 50, 1],
+    },
+    'obstacle': {
+        'Path-around-table-and-back': [0.75, 0.5],
+        'Path-around-table': [0.75, 1],
+    }
 }
+
+obstacle_default_lin_spd = 0.75
+obstacle_default_delta_pos = 1
 
 LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 logging.basicConfig(level=logging.INFO)
@@ -65,10 +76,10 @@ if __name__ == '__main__':
     # if not placed in same folder, parses the filename of the filepath of the path
     # used to get the optimized parameters for each path
     if '/' in path_filepath:
-        path_filename = path_filepath[path_filepath.rindex('/') + 1:]
+        path_name = path_filepath[path_filepath.rindex('/') + 1:path_filepath.rindex('.')]
     else:
-        path_filename = path_filepath
-    logger.debug('Filename of path: ' + path_filename)
+        path_name = path_filepath
+    logger.debug('Filename of path: ' + path_name)
 
     #Load the path
     try:
@@ -83,12 +94,15 @@ if __name__ == '__main__':
     logger.info('Sending commands to MRDS server listening at {}'.format(mrds_url))
 
     if obstacle_detection:
-        controller = ObstacleController(mrds_url)
+        if path_name in PARAMETERS['obstacle']:
+            controller = ObstacleController(mrds_url, lin_spd=PARAMETERS['obstacle'][path_name][0], delta_pos=PARAMETERS['obstacle'][path_name][1])
+        else:
+            controller = ObstacleController(mrds_url, lin_spd=obstacle_default_lin_spd, delta_pos=obstacle_default_delta_pos)
         logger.info('Starting obstacle optimized pure pursuit')
     else:
-        if path_filename in PARAMETERS:
-            controller = FixedController(mrds_url, PARAMETERS[path_filename][0], PARAMETERS[path_filename][1],
-                                         PARAMETERS[path_filename][2])
+        if path_name in PARAMETERS['fixed']:
+            controller = FixedController(mrds_url, PARAMETERS['fixed'][path_name][0], PARAMETERS['fixed'][path_name][1],
+                                         PARAMETERS['fixed'][path_name][2])
         else:
             controller = FixedController(mrds_url)
         logger.info('Starting fixed lookahead pure pursuit')

@@ -19,7 +19,7 @@ class Controller:
     class UnexpectedResponse(Exception):
         pass
 
-    def __init__(self, mrds_url, lin_spd=1.0, delta_pos=0.75):
+    def __init__(self, mrds_url, lin_spd=1, delta_pos=0.75):
         """
             Initializes a new instance of Controller.
             :param mrds_url: url which the MRDS server listens on
@@ -110,7 +110,7 @@ class Controller:
 
     def travel(self, cur_pos, tar_pos, lin_spd, ang_spd):
         """
-        Routine to travel to targeted position at given linear and angular speeds until nearby enough
+        Routine to travel to targeted position at given linear and angular speeds until close enough
         :param cur_pos: current position of the robot
         :type cur_pos: Vector
         :param tar_pos: targeted position to travel to

@@ -14,11 +14,8 @@ class ObstacleController(Controller):
             :type pos_path: list
             :
         """
-        logger.info('Starting obstacle detection pure pursuit')
         pos_index = -1
         last_pos_index = len(pos_path) - 1
-        print(self._lin_spd)
-        print(self._delta_pos)
         while pos_index < last_pos_index:
             cur_pos, cur_rot = self.get_pos_and_orientation()
             pos_index = self.next_optimized_waypoint(cur_pos, cur_rot, pos_path, pos_index)
