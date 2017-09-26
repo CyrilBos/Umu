@@ -12,29 +12,29 @@ import time
 from model import Vector, Quaternion
 from controller import Controller, PathLoader
 
-import getopt
+import argparse
 
+# filename of the path to load. Can be set by --path=filename
 path_filename = 'paths/Path-around-table.json'
 
-#if set to True, instead of a fixed lookahead it will try to optimize as much as possible by detecting obstacles
+# if set to True, instead of a fixed lookahead it will try to optimize as much as possible by detecting obstacles
+# can be set to true by using --optimized option as an argument of this script
+# if set to False, the controller will skip positions with a fixed lookahead independent of the obstacle detection
 optimize_path = False
 
 mrds_url = 'localhost:50000'
 headers = {"Content-type": "application/json", "Accept": "text/json"}
 
 if __name__ == '__main__':
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], '', ['path=', 'optimized'])
-    except getopt.GetoptError as err:
-        print(err)
-        sys.exit(2)
-    print(opts)
-    print(args)
-    for name, value in opts:
-        if name == 'optimized':
-            optimize_path = True
-        if name == '--path':
-            path_filename = value
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--optimized', action='store_true', default=False, help='use path optimization by detecting obstacles')
+    parser.add_argument('--path', type=str, help='filename of the path to load')
+
+    args = parser.parse_args()
+    if args.optimized:
+        optimize_path = True
+    if args.path:
+        path_filename = args.path
 
     try:
         print('Loading path: filename', path_filename)
@@ -43,11 +43,10 @@ if __name__ == '__main__':
         print('Failed to load path {}: '.format(path_filename), ex)
         exit()
 
-    controller = Controller(mrds_url, headers)
+    controller = Controller(mrds_url, headers, path_filename)
 
     pos_path = path_loader.positionPath(timestamps=False)
     rot_path = path_loader.orientationPath()
-
 
     print('Sending commands to MRDS server listening at', mrds_url)
     begin_time = time.time()
