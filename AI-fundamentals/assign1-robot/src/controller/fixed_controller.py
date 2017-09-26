@@ -7,8 +7,8 @@ logger = getLogger('controller')
 
 
 class FixedController(Controller):
-    def __init__(self, mrds_url, headers, lin_spd=1, lookahead=5, delta_pos=0.75):
-        super(FixedController, self).__init__(mrds_url, headers, lin_spd=lin_spd, delta_pos=delta_pos)
+    def __init__(self, mrds_url, lin_spd=1, lookahead=5, delta_pos=0.75):
+        super(FixedController, self).__init__(mrds_url, lin_spd=lin_spd, delta_pos=delta_pos)
         self.__lookahead = lookahead
         logger.info(
             'Using {} with linear speed={}, lookahead={}, delta position={}'.format(self.__class__.__name__, lin_spd,
@@ -23,10 +23,12 @@ class FixedController(Controller):
             :type pos_path: list
         """
         logger.info('Starting fixed pure pursuit')
+        print(self._lin_spd)
+        print(self._delta_pos)
+        print(self.__lookahead)
         # Travel through the path skipping "lookahead" positions every time
         for i in range(0, len(pos_path), self.__lookahead):
-            lin_spd = self._lin_spd
             cur_pos, cur_rot = self.get_pos_and_orientation()
-            self.travel(cur_pos, pos_path[i], lin_spd, pure_pursuit.get_ang_spd(cur_pos, cur_rot, pos_path[i], lin_spd))
+            self.travel(cur_pos, pos_path[i], self._lin_spd, pure_pursuit.get_ang_spd(cur_pos, cur_rot, pos_path[i], self._lin_spd))
 
         self.stop()

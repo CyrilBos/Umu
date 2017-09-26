@@ -6,7 +6,7 @@ from model import Vector, pure_pursuit
 logger = getLogger('controller')
 
 class ObstacleController(Controller):
-    def pure_pursuit(self, pos_path, destination_delta=1):
+    def pure_pursuit(self, pos_path):
         """
             Implements the pure pursuit algorithm using obstacle detection to aim for the furthest position possible.
 
@@ -17,13 +17,13 @@ class ObstacleController(Controller):
         logger.info('Starting obstacle detection pure pursuit')
         pos_index = -1
         last_pos_index = len(pos_path) - 1
+        print(self._lin_spd)
+        print(self._delta_pos)
         while pos_index < last_pos_index:
             cur_pos, cur_rot = self.get_pos_and_orientation()
             pos_index = self.next_optimized_waypoint(cur_pos, cur_rot, pos_path, pos_index)
             logger.info("Target position path index: {}".format(pos_index))
-            lin_spd = self._lin_spd
-            self.travel(cur_pos, pos_path[pos_index], lin_spd, pure_pursuit.get_ang_spd(cur_pos, cur_rot, pos_path[pos_index], lin_spd),
-                        delta_pos=1)
+            self.travel(cur_pos, pos_path[pos_index], self._lin_spd, pure_pursuit.get_ang_spd(cur_pos, cur_rot, pos_path[pos_index], self._lin_spd))
             pos_index+=1
         self.stop()
 

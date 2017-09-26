@@ -108,7 +108,7 @@ class Controller:
         else:
             raise self.UnexpectedResponse(response)
 
-    def travel(self, cur_pos, tar_pos, lin_spd, ang_spd, delta_pos=1):
+    def travel(self, cur_pos, tar_pos, lin_spd, ang_spd):
         """
         Routine to travel to targeted position at given linear and angular speeds until nearby enough
         :param cur_pos: current position of the robot
@@ -127,13 +127,13 @@ class Controller:
         logger.debug(
             'Traveling from {} to {}\n with linear speed={} and angular speed={}'.format(cur_pos, tar_pos, lin_spd,
                                                                                          ang_spd))
-        slp_dur = delta_pos / (lin_spd) #unnecessary to monitor cur_pos more than this
+        slp_dur = self._delta_pos / (lin_spd * 1000) #unnecessary to monitor cur_pos more than this
         response = self.post_speed(ang_spd, lin_spd)
         sleep(slp_dur)
         try:
-            while cur_pos.distance_to(tar_pos) > delta_pos:
+            while cur_pos.distance_to(tar_pos) > self._delta_pos:
                 cur_pos = self.get_pos()
-                logger.debug('[travel()] current position: {}')
+                logger.debug('[travel()] current position: {}'.format(cur_pos))
                 sleep(slp_dur)
 
         except self.UnexpectedResponse as ex:
