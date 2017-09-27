@@ -152,3 +152,9 @@ class Controller:
 
     def stop(self):
         self.post_speed(0, 0)
+
+    def u_turn(self):
+        self.stop()
+        self.post_speed(-1, 0)
+        sleep(1)
+        self.stop()

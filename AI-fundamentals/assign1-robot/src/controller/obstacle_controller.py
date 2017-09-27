@@ -1,7 +1,8 @@
 from logging import getLogger
+from time import sleep
 
 from .controller import Controller
-from model import Vector, pure_pursuit
+from model import Quaternion, Vector, pure_pursuit
 
 logger = getLogger('controller')
 
@@ -44,13 +45,18 @@ class ObstacleController(Controller):
             cur_pos, cur_rot = self.get_pos_and_orientation()
 
             # aim for the position before the one that would cause a collision
-            pos_index = self.next_optimized_waypoint(cur_pos, cur_rot, pos_path, pos_index)
-            logger.info("Target position path index: {}".format(pos_index))
+            new_pos_index = self.next_optimized_waypoint(cur_pos, cur_rot, pos_path, pos_index)
+            if new_pos_index == pos_index:
+                pos_index = new_pos_index + 1
+            else:
+                pos_index = new_pos_index
+
+            logger.info("Target position path index: {}".format(new_pos_index))
 
             self.travel(cur_pos, pos_path[pos_index], self._lin_spd,
                         pure_pursuit.get_ang_spd(cur_pos, cur_rot, pos_path[pos_index], self._lin_spd))
 
-            pos_index += 1
+
         self.stop()
 
     def next_optimized_waypoint(self, cur_pos, cur_rot, pos_path, cur_pos_index):
@@ -81,12 +87,12 @@ class ObstacleController(Controller):
 
             # current robot position in RCS
             rcs_origin = Vector(0, 0, 0)
-            # compute angle between current robot position
+            # compute angle between current robot position and aimed position
             tar_angle = rcs_origin.get_angle(rcs_tar_pos)
 
             min_ind = 0
             min_dist = tar_angle - lasers_angles[0]
-            # search for the nearest angle in laser_angles (
+            # search for the nearest angle in laser_angles
             # could be simplified with a calculation instead of this iteration
             for j in range(1, len(lasers_angles)):
                 dist = tar_angle - lasers_angles[j]
@@ -96,6 +102,12 @@ class ObstacleController(Controller):
 
             # if the laser hits an obstacle, return the index of the previous position on the path
             if lasers[min_ind] < cur_pos.distance_to(tar_pos):
+                if i == cur_pos_index + 1:
+                    # if first position fails, the robot could stop and rotate
+                    # does not work because of lack of laser precision (should use a whole cone instead of just one
+                    pass
                 return i - 1
         return max_lookahead_index
+
+
 

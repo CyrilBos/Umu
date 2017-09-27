@@ -28,13 +28,13 @@ PARAMETERS = {
         'Path-around-table-and-back': [1.5, 10, 0.75],
         'Path-around-table': [1, 5, 0.75],
         'Path-to-bed': [1, 5, 0.75],
-        'Path-from-bed': [1, 50, 1],
+        'Path-from-bed': [1, 5, 1],
     },
     'obstacle': {
         'Path-around-table-and-back': [1.5, 30, 0.75],
         'Path-around-table': [1, 60, 1],
-        'Path-to-bed': [1, 20, 0.75],
-        'Path-from-bed': [1, 50, 0.75],
+        'Path-to-bed': [1, 8, 0.75],
+        'Path-from-bed': [1, 10, 1],
     }
 }
 
@@ -48,6 +48,7 @@ OBSTACLE_DEFAULT_LIN_SPD = 0.75
 OBSTACLE_DEFAULT_MAX_LOOKAHEAD = 10
 OBSTACLE_DEFAULT_DELTA_POS = 0.75
 
+#Used for logging level option
 LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 logging.basicConfig(level=logging.INFO)
 
@@ -96,6 +97,7 @@ if __name__ == '__main__':
 
     logger.info('Sending commands to MRDS server listening at {}'.format(mrds_url))
 
+    # Instantiate the chosen Controller with optimized parameters, or default ones
     if obstacle_detection:
         if path_name in PARAMETERS['obstacle']:
             controller = ObstacleController(mrds_url, PARAMETERS['obstacle'][path_name][0],
@@ -113,7 +115,10 @@ if __name__ == '__main__':
                                          FIXED_DEFAULT_DELTA_POS)
         logger.info('Starting fixed lookahead pure pursuit')
 
-    # Start stopwatch and start sending instructions to the robot
+    if path_name == "Path-from-bed":
+        controller.u_turn()
+
+    # Start stopwatch and start the controller logic sending instructions to the robot
     begin_time = time.time()
     controller.pure_pursuit(pos_path)
     end_time = time.time()
