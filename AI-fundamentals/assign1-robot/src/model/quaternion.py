@@ -13,12 +13,10 @@ class Quaternion:
     def __init__(self, w, vector):
         """
         Initialization of the Quaternion class given a float and a Vector
-        :param tar_pos: targeted position to travel to
-        :type tar_pos: Vector
-        :param cur_pos: current position of the robot
-        :type cur_pos: Vector
-        :param cur_rot: current rotation of the robot
-        :type cur_rot: Quaternion
+        :param w: value of w to assign
+        :type w: float
+        :param vector: unit vector to assign
+        :type vector: Vector
         """
         if not isinstance(vector, Vector):
             raise (TypeError('Parameter vector of init is not a vector'))
@@ -74,31 +72,30 @@ class Quaternion:
 
     def normalize(self):
         """
-        Returns norm of quaternion
+        Returns the norm of quaternion
         """
         return (self.__w + self.x + self.y + self.z) / \
                numpy.sqrt(self.__w * self.__w + self.x * self.x + self.y * self.y + self.z * self.z)
 
     def conjugate(self):
         """
-        Returns conjugate of quaternion
+        Returns the conjugate of quaternion
         """
         return Quaternion(self.w, Vector(-self.x, -self.y, -self.z))
 
     def heading(self):
         """
-        Returns the Vector heading from the robot
+        Returns the heading of this quaternion from the X-axis
         """
         return self.rotate(Vector.x_forward())
 
     def rotate(self, v):
         """
-        Computes the rotation of a Vector v according to the Quaternion
+        Returns the vector v rotated by the quaternion in a new Vector instance
         :param v: vector to rotate
         :type v: Vector
         """
         rotated = (self * Quaternion(0, Vector(v.x, v.y, v.z))) * self.conjugate()
         return Vector(rotated.x, rotated.y, rotated.z)
 
-    def as_vector(self):
-        return Vector(self.x, self.y, self.z)
+
