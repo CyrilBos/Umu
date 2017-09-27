@@ -27,6 +27,9 @@ class ObstacleController(Controller):
         """
         super(ObstacleController, self).__init__(mrds_url, lin_spd, delta_pos)
         self.__max_lookahead = max_lookahead
+        logger.info(
+            'Using {} with linear speed={}, max_lookahead={}, delta position={}'.format(self.__class__.__name__, lin_spd,
+                                                                                    max_lookahead, delta_pos))
 
     def pure_pursuit(self, pos_path):
         """
@@ -68,8 +71,10 @@ class ObstacleController(Controller):
         lasers_angles = self.get_laser_scan_angles()
         lasers = self.get_laser_scan()['Echoes']
 
-        # Go through every position on the path starting at the position next to the current one
-        for i in range(cur_pos_index + 1, cur_pos_index + 1 + self.__max_lookahead):
+        max_lookahead_index = min(cur_pos_index + self.__max_lookahead - 1, len(pos_path) - 1)
+        # Go through every position on the path starting at the position next to the current one and stopping at
+        # max_lookahead_index positions further
+        for i in range(cur_pos_index + 1, max_lookahead_index):
             tar_pos = pos_path[i]
             # convert potential aimed position to RCS
             rcs_tar_pos = pure_pursuit.convert_to_rcs(tar_pos, cur_pos, cur_rot)
@@ -80,16 +85,17 @@ class ObstacleController(Controller):
             tar_angle = rcs_origin.get_angle(rcs_tar_pos)
 
             min_ind = 0
-            min = tar_angle - lasers_angles[0]
+            min_dist = tar_angle - lasers_angles[0]
             # search for the nearest angle in laser_angles (
             # could be simplified with a calculation instead of this iteration
             for j in range(1, len(lasers_angles)):
                 dist = tar_angle - lasers_angles[j]
-                if dist < min:
-                    min = dist
+                if dist < min_dist:
+                    min_dist = dist
                     min_ind = j
 
+            # if the laser hits an obstacle, return the index of the previous position on the path
             if lasers[min_ind] < cur_pos.distance_to(tar_pos):
-                # if the laser hits an obstacle, return the index of the previous position on the path
                 return i - 1
-        return min((len(pos_path)-1, cur_pos_index + 1 + self.__max_lookahead))
+        return max_lookahead_index
+

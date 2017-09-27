@@ -25,14 +25,16 @@ obstacle_detection = False
 # if using another filename, will use the default values of Controller.__init__
 PARAMETERS = {
     'fixed': {
-        'Path-around-table-and-back': [1.5, 20, 0.5],
-        'Path-around-table': [1, 10, 0.75],
+        'Path-around-table-and-back': [1.5, 10, 0.75],
+        'Path-around-table': [1, 5, 0.75],
         'Path-to-bed': [1, 5, 0.75],
         'Path-from-bed': [1, 50, 1],
     },
     'obstacle': {
-        'Path-around-table-and-back': [0.75, 50, 0.5],
-        'Path-around-table': [0.75, 50, 1],
+        'Path-around-table-and-back': [1.5, 30, 0.75],
+        'Path-around-table': [1, 60, 1],
+        'Path-to-bed': [1, 10, 0.75],
+        'Path-from-bed': [1, 5, 0.75],
     }
 }
 
@@ -43,7 +45,7 @@ FIXED_DEFAULT_DELTA_POS = 0.75
 
 # default values for ObstacleController
 OBSTACLE_DEFAULT_LIN_SPD = 0.75
-OBSTACLE_DEFAULT_MAX_LOOKAHEAD = 50
+OBSTACLE_DEFAULT_MAX_LOOKAHEAD = 10
 OBSTACLE_DEFAULT_DELTA_POS = 0.75
 
 LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
@@ -76,6 +78,8 @@ if __name__ == '__main__':
     # used to get the optimized parameters for each path
     if '/' in path_filepath:
         path_name = path_filepath[path_filepath.rindex('/') + 1:path_filepath.rindex('.')]
+    elif '\\' in path_filepath:
+        path_name = path_filepath[path_filepath.rindex('\\') + 1:path_filepath.rindex('.')]
     else:
         path_name = path_filepath
     logger.debug('Filename of path: ' + path_name)
