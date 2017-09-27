@@ -33,8 +33,8 @@ PARAMETERS = {
     'obstacle': {
         'Path-around-table-and-back': [1.5, 30, 0.75],
         'Path-around-table': [1, 60, 1],
-        'Path-to-bed': [1, 10, 0.75],
-        'Path-from-bed': [1, 5, 0.75],
+        'Path-to-bed': [1, 20, 0.75],
+        'Path-from-bed': [1, 50, 0.75],
     }
 }
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
         logger.error('Failed to load path {}:\n {}'.format(path_filepath, ex))
         exit()
 
-    pos_path = path_loader.positionPath(timestamps=False)
+    pos_path = path_loader.positionPath()
 
     logger.info('Sending commands to MRDS server listening at {}'.format(mrds_url))
 
