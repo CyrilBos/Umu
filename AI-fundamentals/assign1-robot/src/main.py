@@ -1,11 +1,3 @@
-"""
-Example demonstrating how to communicate with Microsoft Robotic Developer
-Studio 4 via the Lokarria http interface. 
-
-Author: Erik Billing (billing@cs.umu.se)
-
-Updated by Ola Ringdahl 204-09-11
-"""
 import logging
 import argparse
 import time
@@ -26,7 +18,7 @@ obstacle_detection = False
 
 # Optimized parameters for each path
 # the lists respect the format [lin_spd, lookahead, delta_pos] when using fixed lookahead
-# otherwise for the obstacle detection the format is [linear_speed, delta_pos)
+# otherwise for the obstacle detection the format is [linear_speed, delta_pos}
 # lin_spd (linear speed) and delta_pos parameters are described in FixedController.travel() method
 #
 # if using another filename, will use the default values of Controller.__init__
