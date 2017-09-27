@@ -1,10 +1,12 @@
 from math import atan2, sqrt, pow, cos, sin
 
+
 class Vector:
     """
     Class that represents vectors with 3 float numbers.
     Implements useful functions to use these objects
     """
+
     def __init__(self, x, y, z):
         """
         Initialization of the Vector class given 3 floats
@@ -59,21 +61,30 @@ class Vector:
 
     @staticmethod
     def from_dict(vec_dict):
+        """
+        Returns a new Vector instance from the dict representation used in the path files
+        """
         return Vector(vec_dict['X'], vec_dict['Y'], vec_dict['Z'])
 
     @staticmethod
     def x_forward():
+        """
+        Returns the x-axis unit vector
+        """
         return Vector(1.0, 0.0, 0.0)
 
     def get_angle(self, vec):
         """
-        Returns the angle between the Vector and another
+        Returns the angle between self and another Vector
         :param vec: the other Vector
         :type vec: Vector
         """
         return atan2(vec.x - self.x, vec.y - self.y)
 
     def distance_to(self, vec):
+        """
+        Returns the angle between self and another Vector
+        :param vec: the other Vector
+        :type vec: Vector
+        """
         return sqrt(pow(vec.x - self.x, 2) + pow(vec.y - self.y, 2) + pow(vec.z - self.z, 2))
-
-

@@ -8,28 +8,31 @@ from model import pure_pursuit
 
 logger = getLogger('controller')
 
-#Headers sent with every POST speed requests
+# Headers sent with every POST speed requests
 HEADERS = {"Content-type": "application/json", "Accept": "text/json"}
+
 
 class Controller:
     """
-        This is the Controller base class containing methods to send requests to the MRDS server
+    Controller base class which contains methods to send requests to the MRDS server and the travel monitoring
+    routine.
     """
 
     class UnexpectedResponse(Exception):
+        """
+        Custom exception class raised when a HTTP request fails.
+        """
         pass
 
     def __init__(self, mrds_url, lin_spd=1, delta_pos=0.75):
         """
-            Initializes a new instance of Controller.
-            :param mrds_url: url which the MRDS server listens on
-            :type mrds_url: str
-            :param lin_spd:
-            :type lin_spd: float
-            :param step:
-            :type step: int
-            :param delta_pos:
-            :type delta_pos: float
+        Initializes a new instance of Controller.
+        :param mrds_url: url which the MRDS server listens on
+        :type mrds_url: str
+        :param lin_spd:
+        :type lin_spd: float
+        :param delta_pos:
+        :type delta_pos: float
 
         """
         self.__mrds = http.client.HTTPConnection(mrds_url)
@@ -38,7 +41,7 @@ class Controller:
 
     def post_speed(self, angular_speed, linear_speed):
         """
-        Sends a speed command to the MRDS server
+        Sends a speed command to the MRDS server.
 
         :param angular_speed: value of angular speed
         :type angular_speed: float
@@ -56,7 +59,9 @@ class Controller:
             raise self.UnexpectedResponse(response)
 
     def get_pos(self):
-        """Reads the current position from the MRDS"""
+        """
+        Reads the current position from the MRDS and returns it as a Vector instance.
+        """
         self.__mrds.request('GET', '/lokarria/localization')
         response = self.__mrds.getresponse()
         if response.status == 200:
@@ -67,7 +72,9 @@ class Controller:
             raise self.UnexpectedResponse(response)
 
     def get_pos_and_orientation(self):
-        """Reads the current position and orientation from the MRDS server"""
+        """
+        Reads the current position and orientation from the MRDS server and returns it as a tuple (Vector, Quaternion).
+        """
         self.__mrds.request('GET', '/lokarria/localization')
         response = self.__mrds.getresponse()
         if response.status == 200:
@@ -79,7 +86,9 @@ class Controller:
             raise self.UnexpectedResponse(response)
 
     def get_laser_scan(self):
-        """Requests the current laser scan from the MRDS server and parses it into a dict"""
+        """
+        Requests the current laser scan from the MRDS server and parses it into a dict.
+        """
         self.__mrds.request('GET', '/lokarria/laser/echoes')
         response = self.__mrds.getresponse()
         if response.status == 200:
@@ -90,7 +99,9 @@ class Controller:
             return self.UnexpectedResponse(response)
 
     def get_laser_scan_angles(self):
-        """Requests the current laser properties from the MRDS server and returns the list of the laser angles"""
+        """
+        Requests the current laser properties from the MRDS server and returns a list of the laser angles.
+        """
         self.__mrds.request('GET', '/lokarria/laser/properties')
         response = self.__mrds.getresponse()
         if response.status == 200:
@@ -127,7 +138,7 @@ class Controller:
         logger.debug(
             'Traveling from {} to {}\n with linear speed={} and angular speed={}'.format(cur_pos, tar_pos, lin_spd,
                                                                                          ang_spd))
-        slp_dur = self._delta_pos / (lin_spd * 1000) #unnecessary to monitor cur_pos more than this
+        slp_dur = self._delta_pos / (lin_spd * 1000)  # unnecessary to monitor cur_pos more than this
         response = self.post_speed(ang_spd, lin_spd)
         sleep(slp_dur)
         try:
