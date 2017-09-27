@@ -66,13 +66,10 @@ class Quaternion:
         return self.__w
 
     @staticmethod
-    def from_two_vectors(u, v):
-        w = numpy.cross(u.as_np_array(), v.as_np_array())
-        q = Quaternion(1. + u * v, Vector(w[0], w[1], w[2]))
-        return q.normalize()
-
-    @staticmethod
     def from_dict(dict):
+        """
+            Returns a new instance of Quaternion from the dict representation used in the path files.
+        """
         return Quaternion(dict['W'], Vector(dict['X'], dict['Y'], dict['Z']))
 
     def normalize(self):

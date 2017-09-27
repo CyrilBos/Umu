@@ -43,6 +43,7 @@ class ObstacleController(Controller):
             #convert potential aimed position to RCS
             rcs_tar_pos = pure_pursuit.convert_to_rcs(tar_pos, cur_pos, cur_rot)
 
+            #current robot position in RCS
             rcs_origin = Vector(0, 0, 0)
             #compute angle between current robot position
             tar_angle = rcs_origin.get_angle(rcs_tar_pos)
