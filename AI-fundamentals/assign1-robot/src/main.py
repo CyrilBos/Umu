@@ -5,7 +5,7 @@ import time
 from model import Vector, Quaternion
 from controller import FixedController, ObstacleController, PathLoader
 
-#url which the MRDS server listens on
+# url which the MRDS server listens on
 mrds_url = 'localhost:50000'
 
 # filename of the path to load. Can be set by appending option --path=filename to this script
@@ -18,9 +18,10 @@ obstacle_detection = False
 
 # Optimized parameters for each path
 # the lists respect the format [lin_spd, lookahead, delta_pos] when using fixed lookahead
-# otherwise for the obstacle detection the format is [linear_speed, delta_pos}
-# lin_spd (linear speed) and delta_pos parameters are described in FixedController.travel() method
-#
+# otherwise for the obstacle detection the format is [linear_speed, max_lookahead, delta_pos]
+# lin_spd (linear speed) and delta_pos parameters are described in Controller.__init__()
+# lookahead is described in FixedController.__init__() and used in FixedController.pure_pursuit()
+# max_lookahead is described in ObstacleController.__init__() and used in ObstacleController.next_optimized_waypoint()
 # if using another filename, will use the default values of Controller.__init__
 PARAMETERS = {
     'fixed': {
@@ -30,19 +31,26 @@ PARAMETERS = {
         'Path-from-bed': [1, 50, 1],
     },
     'obstacle': {
-        'Path-around-table-and-back': [0.75, 0.5],
-        'Path-around-table': [0.75, 1],
+        'Path-around-table-and-back': [0.75, 50, 0.5],
+        'Path-around-table': [0.75, 50, 1],
     }
 }
 
-obstacle_default_lin_spd = 0.75
-obstacle_default_delta_pos = 1
+# default values for Fixed
+FIXED_DEFAULT_LIN_SPD = 1
+FIXED_DEFAULT_LOOKAHEAD = 5
+FIXED_DEFAULT_DELTA_POS = 0.75
+
+# default values for ObstacleController
+OBSTACLE_DEFAULT_LIN_SPD = 0.75
+OBSTACLE_DEFAULT_MAX_LOOKAHEAD = 50
+OBSTACLE_DEFAULT_DELTA_POS = 0.75
 
 LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 logging.basicConfig(level=logging.INFO)
 
 if __name__ == '__main__':
-    #Parsing arguments for script options
+    # Parsing arguments for script options
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', type=str, help='filename of the path to load')
     parser.add_argument('--obstacle', action='store_true', default=False,
@@ -55,7 +63,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     logger = logging.getLogger(__name__)
-    #Setting up depending on options values
+    # Setting up depending on options values
     if args.obstacle:
         obstacle_detection = True
     if args.path:
@@ -63,7 +71,6 @@ if __name__ == '__main__':
     if args.level:
         logger.setLevel(args.level)
         logging.getLogger('controller').setLevel(LOG_LEVEL_STRINGS.index(args.level))
-
 
     # if not placed in same folder, parses the filename of the filepath of the path
     # used to get the optimized parameters for each path
@@ -73,7 +80,7 @@ if __name__ == '__main__':
         path_name = path_filepath
     logger.debug('Filename of path: ' + path_name)
 
-    #Load the path
+    # Load the path
     try:
         logger.info('Loading path: {}'.format(path_filepath))
         path_loader = PathLoader(path_filepath)
@@ -87,19 +94,22 @@ if __name__ == '__main__':
 
     if obstacle_detection:
         if path_name in PARAMETERS['obstacle']:
-            controller = ObstacleController(mrds_url, lin_spd=PARAMETERS['obstacle'][path_name][0], delta_pos=PARAMETERS['obstacle'][path_name][1])
+            controller = ObstacleController(mrds_url, PARAMETERS['obstacle'][path_name][0],
+                                            PARAMETERS['obstacle'][path_name][1], PARAMETERS['obstacle'][path_name][2])
         else:
-            controller = ObstacleController(mrds_url, lin_spd=obstacle_default_lin_spd, delta_pos=obstacle_default_delta_pos)
+            controller = ObstacleController(mrds_url, OBSTACLE_DEFAULT_LIN_SPD, OBSTACLE_DEFAULT_MAX_LOOKAHEAD,
+                                            OBSTACLE_DEFAULT_DELTA_POS)
         logger.info('Starting obstacle optimized pure pursuit')
     else:
         if path_name in PARAMETERS['fixed']:
             controller = FixedController(mrds_url, PARAMETERS['fixed'][path_name][0], PARAMETERS['fixed'][path_name][1],
                                          PARAMETERS['fixed'][path_name][2])
         else:
-            controller = FixedController(mrds_url)
+            controller = FixedController(mrds_url, FIXED_DEFAULT_LIN_SPD, FIXED_DEFAULT_LOOKAHEAD,
+                                         FIXED_DEFAULT_DELTA_POS)
         logger.info('Starting fixed lookahead pure pursuit')
 
-    #Start stopwatch and start sending instructions to the robot
+    # Start stopwatch and start sending instructions to the robot
     begin_time = time.time()
     controller.pure_pursuit(pos_path)
     end_time = time.time()
