@@ -35,6 +35,7 @@ PARAMETERS = {
         'Path-around-table': [1, 60, 1],
         'Path-to-bed': [1, 8, 0.75],
         'Path-from-bed': [1, 10, 1],
+        'exam2017': [1, 50, 0.75]
     }
 }
 
@@ -45,7 +46,7 @@ FIXED_DEFAULT_DELTA_POS = 0.75
 
 # default values for ObstacleController
 OBSTACLE_DEFAULT_LIN_SPD = 0.75
-OBSTACLE_DEFAULT_MAX_LOOKAHEAD = 10
+OBSTACLE_DEFAULT_MAX_LOOKAHEAD = 5
 OBSTACLE_DEFAULT_DELTA_POS = 0.75
 
 #Used for logging level option
