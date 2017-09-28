@@ -1,4 +1,4 @@
-# Genral information
+# General information
 The assignment group is composed of Cyril Bos (cybo0001) and Dorian Cuquemelle (docu0002), international students from ENSEIRB-MATMECA,
 France.
 
@@ -15,6 +15,10 @@ Options can be issued as arguments of the script instead of modifying the file:
 
 The --obstacle option enables the obstacle detection algorithm by instantiating an ObstacleController instead of a 
 FixedController. 
+
+The --level option enables a more or less precise logging in the terminal. Defaults to INFO. Level DEBUG will provide 
+more information such as the current position of the robot while travelling. Level ERROR will provide logs only when
+an exception is encountered.   
 
 # Code structure
 The code is divided into a module main.py and 2 packages controller and model. 
