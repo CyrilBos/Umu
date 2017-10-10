@@ -15,26 +15,26 @@ from logging import getLogger
 
 logger = getLogger('perceptron')
 
+
 class Perceptron:
     _output_nodes = []
 
     def __init__(self, images, input_nodes_count=400, training_proportion=0.66, learning_rate=0.05):
         self._learning_rate = learning_rate
         training_images = images[:training_proportion]
-        evaluation_images = images[training_proportion+1:]
+        evaluation_images = images[training_proportion + 1:]
 
         for emotion_str in emotions:
             self._output_nodes.append(OutputNode(threshold=0.5, emotion=emotion_str))
 
         for i in range(input_nodes_count):
-            input_node = InputNode(pixels_ind=i, threshold = 0.5)
+            input_node = InputNode(pixels_ind=[i], threshold=0.5)
             for output_node in self._output_nodes:
                 output_node.input_links().append(Link(input_node))
 
-
         images_length = len(training_images)
 
-        #Learning
+        # Learning
         while images_length > 0:
             i = randrange(images_length)
             image = training_images[i]
@@ -44,8 +44,7 @@ class Perceptron:
             training_images.remove(i)
             images_length -= 1
 
-
-        #Performance evaluation
+        # Performance evaluation
         success = 0
 
         for evaluation_image in evaluation_images:
@@ -54,15 +53,19 @@ class Perceptron:
         logger.info('Accuracy: {}%'.format(success / len(evaluation_images)) * 100)
 
     def learn(self, image):
-        activated_output_node_index = emotions.index(image.emotion)
-        activated_output_node = self._output_nodes[activated_output_node_index]
+        wanted_output_node_index = emotions.index(image.emotion)
+        activated_output_node = self._output_nodes[wanted_output_node_index]
 
-        for link in activated_output_node.input_links:
-            if link.input_node.is_activated(image):
-                delta = self._learning_rate * self.
-                link.weight = self._learning_rate
+        for i in range(len(self._output_nodes)):
+            if i == wanted_output_node_index:
+                desired_output = True
             else:
-                link.weight = self._learning_rate
+                desired_output = False
+
+            for link in activated_output_node.input_links:
+                error = desired_output - link.input_node.is_activated()
+                delta = self._learning_rate * error
+                link.weight += delta
 
     def guess_emotion(self, image):
         """
@@ -71,7 +74,4 @@ class Perceptron:
         """
         for output_node in self._output_nodes:
             if output_node.is_activated(image):
-                return output_node.state()
-
-
-
+                return emotions[self._output_nodes.index(output_node)]
