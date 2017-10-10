@@ -1,17 +1,11 @@
-from math import sqrt
+from logging import getLogger
+from random import randrange
 
-from .output_node import OutputNode
 from .input_node import InputNode
 
 from .link import Link
-
-from utils.image import ROW_WIDTH
-
+from .output_node import OutputNode
 from utils.emotion import emotions
-
-from random import randrange
-
-from logging import getLogger
 
 logger = getLogger('perceptron')
 

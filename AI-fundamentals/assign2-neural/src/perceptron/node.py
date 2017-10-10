@@ -5,11 +5,11 @@ class Node:
     def __init__(self, threshold):
         self._threshold = threshold
 
-    def is_activated(self, pixels):
+    def is_activated(self, image):
         node_sum = 0
         for input_link in self._input_links:
-            input_node = input_link.input_node()
-            node_sum += input_link.weight() * input_node.is_activated(pixels)
+            input_node = input_link.input_node
+            node_sum += input_link.weight * input_node.is_activated(image)
         return node_sum > self._threshold
 
 
