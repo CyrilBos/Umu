@@ -42,5 +42,3 @@ class Node:
         :return: value of the node
         """
         pass
-
-    def

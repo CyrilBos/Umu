@@ -7,7 +7,7 @@ from .link import Link
 
 from utils.image import ROW_WIDTH
 
-from utils.emotion import emotions, Emotion
+from utils.emotion import emotions
 
 from random import randrange
 
