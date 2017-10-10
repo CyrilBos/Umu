@@ -1,7 +1,6 @@
-from .image import Image
-from .emotion import Emotion
-
 import re
+
+from .image import Image
 
 
 class Parser:
@@ -24,7 +23,7 @@ class Parser:
                         pixels.append(cur_pixels)
                         cur_pixels = []
                 else:
-                    matches = re.findall('\d{1,2}\s{1}', line)
+                    matches = re.findall('\d{1,2}\s+', line)
                     if matches:
                         row = []
                         for val in matches:

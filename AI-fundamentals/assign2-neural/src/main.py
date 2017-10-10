@@ -1,4 +1,8 @@
 from utils import Parser
+from logging import getLogger
+
+logger = getLogger('perceptron')
+
 
 parser = Parser()
 training_images = parser.parse_training_images('training-data/training.txt', 'training-data/training-facit.txt')
