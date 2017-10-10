@@ -55,10 +55,7 @@ class Perceptron:
 
     def learn(self, image):
         for output_node in self._output_nodes:
-            if output_node.emotion == image.emotion:
-                desired_output = True
-            else:
-                desired_output = False
+            desired_output = output_node.emotion == image.emotion
 
             for link in output_node.input_links:
                 error = desired_output - link.input_node.is_activated()
