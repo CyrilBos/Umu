@@ -28,9 +28,10 @@ class Perceptron:
             self._output_nodes.append(OutputNode(threshold=0.5, emotion=emotion_str))
 
         for i in range(input_nodes_count):
+            #TODO: divide image matrix in even submatrices
             input_node = InputNode(pixels_ind=[i], threshold=0.5)
             for output_node in self._output_nodes:
-                output_node.input_links().append(Link(input_node))
+                output_node.input_links.append(Link(input_node))
 
         images_length = len(training_images)
 
@@ -53,16 +54,13 @@ class Perceptron:
         logger.info('Accuracy: {}%'.format(success / len(evaluation_images)) * 100)
 
     def learn(self, image):
-        wanted_output_node_index = emotions.index(image.emotion)
-        activated_output_node = self._output_nodes[wanted_output_node_index]
-
-        for i in range(len(self._output_nodes)):
-            if i == wanted_output_node_index:
+        for output_node in self._output_nodes:
+            if output_node.emotion == image.emotion:
                 desired_output = True
             else:
                 desired_output = False
 
-            for link in activated_output_node.input_links:
+            for link in output_node.input_links:
                 error = desired_output - link.input_node.is_activated()
                 delta = self._learning_rate * error
                 link.weight += delta
@@ -74,4 +72,4 @@ class Perceptron:
         """
         for output_node in self._output_nodes:
             if output_node.is_activated(image):
-                return emotions[self._output_nodes.index(output_node)]
+                return emotions[output_node.emotion]

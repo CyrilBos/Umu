@@ -1,5 +1,10 @@
 from utils import Parser
+from .perceptron import Perceptron
+
+
 from logging import getLogger
+
+
 
 logger = getLogger('perceptron')
 
@@ -17,4 +22,6 @@ for image in training_images:
             row_pixels_count = len(row)
             if row_pixels_count != 20:
                 raise Exception('Parsing problem. Image with a row of {} pixels instead of 20'.format(row_pixels_count))
-    print(image)
+
+
+perceptron = Perceptron(training_images)
