@@ -10,7 +10,8 @@ class Node:
         for input_link in self._input_links:
             input_node = input_link.input_node
             node_sum += input_link.weight * input_node.is_activated(image)
-        return node_sum > self._threshold
+        #@Dorian calcul correspondant `a g() dans diapo 8
+        return node_sum / 400 > self._threshold
 
 
     @property

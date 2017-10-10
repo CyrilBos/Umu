@@ -11,3 +11,7 @@ class Link:
     @property
     def weight(self):
         return self._weight
+
+    @weight.setter
+    def weight(self, value):
+        self._weight = value

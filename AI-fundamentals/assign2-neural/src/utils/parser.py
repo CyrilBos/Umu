@@ -44,7 +44,7 @@ class Parser:
                 if matches:
                     cur_index += 1
                     val = matches.groups()[0]
-                    images.append(Image(pixels[cur_index], int(val)))
+                    images.append(Image(pixels[cur_index], int(val)-1))
 
 
         return images

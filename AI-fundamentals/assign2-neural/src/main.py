@@ -1,19 +1,17 @@
-import sys; import pprint
-pprint.pprint(sys.path)
+import logging
+logger = logging.getLogger('perceptron')
+logger.setLevel(logging.INFO)
 
 from utils import Parser
 from perceptron import Perceptron
 
 
-from logging import getLogger
-
 
 
 if __name__ == '__main__':
-    logger = getLogger('perceptron')
-
 
     parser = Parser()
+    logger.info('Parsing images')
     training_images = parser.parse_training_images('training-data/training.txt', 'training-data/training-facit.txt')
 
     #TODO: make this a unit test
@@ -26,6 +24,5 @@ if __name__ == '__main__':
                 row_pixels_count = len(row)
                 if row_pixels_count != 20:
                     raise Exception('Parsing problem. Image with a row of {} pixels instead of 20'.format(row_pixels_count))
-
 
     perceptron = Perceptron(training_images)
