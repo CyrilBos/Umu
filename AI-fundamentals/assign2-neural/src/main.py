@@ -5,6 +5,7 @@ logger.setLevel(logging.INFO)
 from utils import Parser
 from perceptron import Perceptron
 
+import cProfile
 
 
 

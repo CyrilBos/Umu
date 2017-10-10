@@ -15,14 +15,10 @@ class Perceptron:
 
     def __init__(self, images, input_nodes_count=400, training_proportion=0.66, learning_rate=0.05):
         self._learning_rate = learning_rate
-        tamer = 0
         training_images_len = int(training_proportion * len(images))
 
-        training_images = images[:training_images_len]
-        evaluation_images = images[training_images_len:]
-
         for i in range(len(emotions)):
-            self._output_nodes.append(OutputNode(threshold=0.6, emotion=Emotion(i)))
+            self._output_nodes.append(OutputNode(threshold=0.5, emotion=Emotion(i)))
 
         for i in range(input_nodes_count):
             #TODO: divide image matrix in even submatrices
@@ -30,8 +26,17 @@ class Perceptron:
             for output_node in self._output_nodes:
                 output_node.input_links.append(Link(input_node, weight=1))
 
+        training_images = images[:training_images_len]
+        evaluation_images = images[training_images_len:]
         images_length = len(training_images)
 
+        self.train(images_length, training_images, evaluation_images)#while <65: @Dorian mais c' est cassé
+            #training_images = images[:training_images_len]
+            #evaluation_images = images[training_images_len:]
+
+
+
+    def train(self, images_length, training_images, evaluation_images):
         # Learning
         while images_length > 0:
             i = randrange(images_length)
@@ -45,16 +50,15 @@ class Perceptron:
         # Performance evaluation
         success = 0
 
-        i = training_images_len+1
         for evaluation_image in evaluation_images:
-            print(i)
             guess = self.guess_emotion(evaluation_image)
-            if guess:
+            if guess:#@Dorian ca arrive souvent que ca renvoit None parce que aucune output activee
                 success += guess == evaluation_image.emotion
-            i+=1
         accuracy = success / len(evaluation_images) * 100
+
         print('success = {}'.format(success))
         print('Accuracy: {}'.format(accuracy))
+        return accuracy
 
 
     def learn(self, image):
