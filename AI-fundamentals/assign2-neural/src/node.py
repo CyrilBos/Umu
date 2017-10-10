@@ -1,11 +1,8 @@
-from numpy import average
-
-
 class Node:
     _input_links = []
     _weight = 0.5
 
-    def __init__(self, pixels_ind, threshold):
+    def __init__(self, threshold):
         self._threshold = threshold
 
     def is_activated(self, pixels):
