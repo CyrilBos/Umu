@@ -56,11 +56,11 @@ class Perceptron:
     def learn(self, image):
         for output_node in self._output_nodes:
             desired_output = output_node.emotion == image.emotion
-
-            for link in output_node.input_links:
-                error = desired_output - link.input_node.is_activated()
-                delta = self._learning_rate * error
-                link.weight += delta
+            error = desired_output - output_node.is_activated()
+            if error:
+                for link in output_node.input_links:
+                    delta = self._learning_rate * error * link.input_node.output(image)
+                    link.weight += delta
 
     def guess_emotion(self, image):
         """
