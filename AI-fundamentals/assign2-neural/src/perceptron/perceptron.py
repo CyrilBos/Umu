@@ -22,7 +22,7 @@ class Perceptron:
 
             #create the link between the output node and the fixed input node with a constant pixel value of 1
             fixed_input = FixedInputNode(fixed_pixel_value=1)
-            output_node.input_links.append(Link(fixed_input, weight=1))
+            #output_node.input_links.append(Link(fixed_input, weight=1))
 
             self._output_nodes.append(output_node)
 
@@ -37,12 +37,12 @@ class Perceptron:
         images_length = len(training_images)
 
         iteration = 0
-        print(iteration)
+        #print(iteration)
         while self.train(images_length, training_images, evaluation_images) < 65:
             training_images = images[:training_images_len]
             evaluation_images = images[training_images_len:]
             iteration+=1
-            print(iteration)
+            #print(iteration)
 
     def train(self, images_length, training_images, evaluation_images):
         # Learning
@@ -64,7 +64,7 @@ class Perceptron:
                 success += 1
         accuracy = success / len(evaluation_images) * 100
 
-        print('Performance: {}.3%'.format(accuracy))
+        #print('Performance: {}.3%'.format(accuracy))
         return accuracy
 
     def learn(self, image):
@@ -94,4 +94,4 @@ class Perceptron:
         index = 1
         for image in images:
             emotion = self.predict(image)
-            print('Image {}: {})'.format(index, emotion.value + 1))
+            print('Image{} {}'.format(index, emotion.value + 1))
