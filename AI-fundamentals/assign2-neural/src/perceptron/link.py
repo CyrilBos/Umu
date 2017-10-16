@@ -1,5 +1,4 @@
 class Link:
-
     def __init__(self, input_node, weight=0.5):
         self._input_node = input_node
         self._weight = weight
