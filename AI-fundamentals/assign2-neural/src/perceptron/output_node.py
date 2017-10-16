@@ -1,19 +1,19 @@
-from .node import Node
+import math
 
-class OutputNode(Node):
+
+class OutputNode:
     _input_links = []
 
-    def __init__(self, threshold, emotion):
-        super().__init__(threshold)
+    def __init__(self, emotion):
         self._emotion = emotion
 
-    def is_activated(self, image):
+    def get_activation_level(self, image):
         node_sum = 0
         for input_link in self._input_links:
             input_node = input_link.input_node
-            node_sum += input_link.weight * input_node.is_activated(image)
-        #@Dorian calcul correspondant `a g() dans diapo 8
-        return node_sum / 400 > self._threshold
+            node_sum += input_link.weight * input_node.get_activation_level(image)
+
+        return 1 / (1 + math.exp(-node_sum))
 
     @property
     def input_links(self):

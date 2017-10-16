@@ -102,10 +102,6 @@ class ObstacleController(Controller):
 
             # if the laser hits an obstacle, return the index of the previous position on the path
             if lasers[min_ind] < cur_pos.distance_to(tar_pos):
-                if i == cur_pos_index + 1:
-                    # if first position fails, the robot could stop and rotate
-                    # does not work because of lack of laser precision (should use a whole cone instead of just one
-                    pass
                 return i - 1
         return max_lookahead_index
 

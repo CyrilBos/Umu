@@ -1,20 +1,14 @@
-from numpy import average
+from numpy import average, math
 
-from .node import Node
 
-class InputNode(Node):
-    def __init__(self, pixels_ind, threshold=0.5):
-        super().__init__(threshold)
+class InputNode:
+    def __init__(self, pixels_ind):
         self._pixels_ind = pixels_ind
 
-    def is_activated(self, image):
-        # @Dorian en gros si grey_level > 16 c' est active
-        # mais generalise avec la moyenne des pixels pour plus tard
-        return self.output(image) > self._threshold
-
-    def output(self, image):
+    def get_activation_level(self, image):
         pixels_sum = 0
+        pixels_count = len(self._pixels_ind)
         for ind in self._pixels_ind:
-            pixels_sum += image.get_pixel(ind)
-        #returns average / 32 to get a value between 0 and 1
-        return pixels_sum / len(self._pixels_ind) / 32
+            pixels_sum += image.get_pixel_by_index(ind)
+
+        return 1 / (1 + math.exp(-pixels_sum / pixels_count))
