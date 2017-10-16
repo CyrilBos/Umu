@@ -13,3 +13,6 @@ class TrainingImage(Image):
     @property
     def emotion(self):
         return self.__emotion
+
+    def get_contrasted_image(self):
+        return TrainingImage(self._get_contrasted_pixels(), self.__emotion)
