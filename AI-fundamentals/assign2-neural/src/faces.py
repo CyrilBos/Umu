@@ -31,4 +31,4 @@ if __name__ == '__main__':
 
     test_images = parser.parse_test_images(test_path)
 
-    #perceptron.classify_images(test_images)
+    perceptron.classify_images(test_images)

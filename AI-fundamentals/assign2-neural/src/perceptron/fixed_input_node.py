@@ -9,4 +9,5 @@ class FixedInputNode(InputNode):
         self._fixed_pixel_value = fixed_pixel_value
 
     def get_activation_level(self, image):
-        return 1 / (1 + math.exp(-self._fixed_pixel_value))
+        #return 1 / (1 + math.exp(-self._fixed_pixel_value-16))
+        return self._fixed_pixel_value/31

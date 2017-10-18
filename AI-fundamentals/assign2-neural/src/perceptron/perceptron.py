@@ -11,7 +11,7 @@ from utils import Emotion
 
 
 class Perceptron:
-    def __init__(self, images, training_proportion=0.66, learning_rate=0.1, input_nodes_count=400):
+    def __init__(self, images, training_proportion=0.66, learning_rate=0.15, input_nodes_count=400):
         self._output_nodes = []
         self._learning_rate = learning_rate
         training_images_len = int(training_proportion * len(images))
@@ -37,13 +37,14 @@ class Perceptron:
         images_length = len(training_images)
 
         iteration = 0
-        print(iteration)
+        print("# " + str(iteration))
         performance = self.train(images_length, training_images, evaluation_images)
-        while performance < 80: # TODO: calc average variation to stop iterating under some threshold
+
+        while iteration<50 and performance<70: # TODO: calc average variation to stop iterating under some threshold
             training_images = images[:training_images_len]
             evaluation_images = images[training_images_len:]
             iteration += 1
-            print(iteration)
+            print("# " + str(iteration))
             performance = self.train(images_length, training_images, evaluation_images)
 
     def train(self, images_length, training_images, evaluation_images):
@@ -66,17 +67,17 @@ class Perceptron:
                 success += 1
         accuracy = success / len(evaluation_images) * 100
 
-        print('Performance: {0:.3f}%'.format(accuracy))
+        print('# Performance: {0:.3f}%'.format(accuracy))
         return accuracy
 
     def learn(self, image):
+        contrasted_image = image.get_contrasted_image()
         for output_node in self._output_nodes:
             desired_output = output_node.emotion == image.emotion
-            #contrasted_image = image.get_contrasted_image()
-            activation_level = output_node.get_activation_level(image)# activation_level = output_node.get_activation_level(contrasted_image)
+            activation_level = output_node.get_activation_level(contrasted_image)# activation_level = output_node.get_activation_level(contrasted_image)
             error = desired_output - activation_level
             for link in output_node.input_links:
-                delta = self._learning_rate * error * link.input_node.get_activation_level(image)
+                delta = self._learning_rate * error * link.input_node.get_activation_level(contrasted_image)
                 link.weight += delta
 
     def predict(self, image):
@@ -84,11 +85,11 @@ class Perceptron:
         :param image: new image to test
         :return:
         """
-        max = self._output_nodes[0].get_activation_level(image)
+        contrasted_image = image.get_contrasted_image()
+        max = self._output_nodes[0].get_activation_level(contrasted_image)
         max_index = 0
         for i in range(1, len(self._output_nodes)):
-            #contrasted_image = image.get_contrasted_image()
-            activation_level = self._output_nodes[i].get_activation_level(image) # activation_level = output_node.get_activation_level(contrasted_image)
+            activation_level = self._output_nodes[i].get_activation_level(contrasted_image) # activation_level = output_node.get_activation_level(contrasted_image)
             if activation_level > max:
                 max = activation_level
                 max_index = i
@@ -99,3 +100,4 @@ class Perceptron:
         for image in images:
             emotion = self.predict(image)
             print('Image{} {}'.format(index, emotion.value + 1))
+

@@ -7,4 +7,5 @@ class InputNode:
 
     def get_activation_level(self, image):
         pixel_value = image.get_pixel_by_index(self._pixels_ind)
-        return 1 / (1 + math.exp(-pixel_value))
+        #return 1 / (1 + math.exp(-pixel_value-16))
+        return pixel_value / 31
