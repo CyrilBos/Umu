@@ -1,0 +1,202 @@
+# 0
+# Performance: 63.235%
+# 1
+# Performance: 63.235%
+# 2
+# Performance: 63.235%
+# 3
+# Performance: 64.706%
+# 4
+# Performance: 63.235%
+# 5
+# Performance: 64.706%
+# 6
+# Performance: 61.765%
+# 7
+# Performance: 63.235%
+# 8
+# Performance: 64.706%
+# 9
+# Performance: 63.235%
+# 10
+# Performance: 64.706%
+# 11
+# Performance: 63.235%
+# 12
+# Performance: 64.706%
+# 13
+# Performance: 63.235%
+# 14
+# Performance: 63.235%
+# 15
+# Performance: 64.706%
+# 16
+# Performance: 64.706%
+# 17
+# Performance: 63.235%
+# 18
+# Performance: 64.706%
+# 19
+# Performance: 64.706%
+# 20
+# Performance: 64.706%
+# 21
+# Performance: 64.706%
+# 22
+# Performance: 64.706%
+# 23
+# Performance: 64.706%
+# 24
+# Performance: 63.235%
+# 25
+# Performance: 64.706%
+# 26
+# Performance: 64.706%
+# 27
+# Performance: 63.235%
+# 28
+# Performance: 63.235%
+# 29
+# Performance: 63.235%
+# 30
+# Performance: 64.706%
+# 31
+# Performance: 64.706%
+# 32
+# Performance: 63.235%
+# 33
+# Performance: 64.706%
+# 34
+# Performance: 64.706%
+# 35
+# Performance: 63.235%
+# 36
+# Performance: 64.706%
+# 37
+# Performance: 64.706%
+# 38
+# Performance: 64.706%
+# 39
+# Performance: 64.706%
+# 40
+# Performance: 64.706%
+# 41
+# Performance: 64.706%
+# 42
+# Performance: 64.706%
+# 43
+# Performance: 64.706%
+# 44
+# Performance: 64.706%
+# 45
+# Performance: 63.235%
+# 46
+# Performance: 64.706%
+# 47
+# Performance: 64.706%
+# 48
+# Performance: 64.706%
+# 49
+# Performance: 64.706%
+# 50
+# Performance: 64.706%
+Image1 2
+Image1 1
+Image1 1
+Image1 4
+Image1 2
+Image1 2
+Image1 3
+Image1 3
+Image1 4
+Image1 1
+Image1 4
+Image1 1
+Image1 4
+Image1 3
+Image1 1
+Image1 4
+Image1 2
+Image1 3
+Image1 1
+Image1 1
+Image1 2
+Image1 3
+Image1 4
+Image1 4
+Image1 1
+Image1 2
+Image1 1
+Image1 2
+Image1 4
+Image1 1
+Image1 4
+Image1 1
+Image1 1
+Image1 1
+Image1 2
+Image1 3
+Image1 2
+Image1 1
+Image1 1
+Image1 4
+Image1 2
+Image1 2
+Image1 3
+Image1 2
+Image1 1
+Image1 3
+Image1 2
+Image1 3
+Image1 2
+Image1 3
+Image1 4
+Image1 1
+Image1 1
+Image1 4
+Image1 2
+Image1 4
+Image1 2
+Image1 4
+Image1 3
+Image1 2
+Image1 1
+Image1 1
+Image1 2
+Image1 2
+Image1 2
+Image1 3
+Image1 2
+Image1 4
+Image1 2
+Image1 4
+Image1 3
+Image1 3
+Image1 3
+Image1 2
+Image1 2
+Image1 3
+Image1 4
+Image1 2
+Image1 1
+Image1 2
+Image1 2
+Image1 2
+Image1 2
+Image1 3
+Image1 2
+Image1 2
+Image1 4
+Image1 4
+Image1 4
+Image1 1
+Image1 2
+Image1 4
+Image1 3
+Image1 3
+Image1 2
+Image1 4
+Image1 1
+Image1 4
+Image1 1
+Image1 1

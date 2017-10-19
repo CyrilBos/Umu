@@ -1,23 +1,25 @@
-from typing import List
-
-
 class Image:
     ROW_WIDTH = 20
 
     def __init__(self, pixels):
         self._pixels = pixels
 
-    def __str__(self) -> str:
+    def __str__(self):
         return '<Image>\n Pixels:\n' + self._pixels.__str__()
 
     @property
-    def pixels(self) -> List[List[int]]:
+    def pixels(self):
         return self._pixels
 
-    def get_pixel_by_index(self, index) -> int:
+    @pixels.setter
+    def pixels(self, value):
+        self._pixels = value
+
+
+    def get_pixel_by_index(self, index):
         return self._pixels[int(index / self.ROW_WIDTH)][index % self.ROW_WIDTH]
 
-    def _get_contrasted_pixels(self,contrast=0):
+    def _get_contrasted_pixels(self, contrast=0):
         contrasted_pixels = []
         factor = (259*(contrast+255))/(255*(259-contrast))
         for i in range(self.ROW_WIDTH):
