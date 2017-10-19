@@ -29,8 +29,8 @@ if __name__ == '__main__':
     """
 
     quarters_indexes = [(0, 0), (0, 1), (1, 1), (1, 0)]
-    mask_indexes = []
 
+    #rotate all the images depending on the eyebrows
     for image in training_images:
         pixels = image.pixels
         maximums = []
@@ -41,6 +41,7 @@ if __name__ == '__main__':
             maximum = 0
             max_i = 0
             max_j = 0
+            #cut the image pixels in 4 submatrices
             for i in range(a * 10 + 1, (a + 1) * 10 - 1):  # row indexes
                 for j in range(b * 10 + 1, (b + 1) * 10 - 1):  # col indexes
                     #calc mask
@@ -60,16 +61,23 @@ if __name__ == '__main__':
                         max_j = j
             maximums.append(maximum)
             maximums_ind.append((max_i, max_j))
+
+        #get maximum mask center
         max1 = max(maximums)
         max_index1 = maximums.index(max1)
+        #delete first maximum mask center
         maximums[max_index1] = 0
+
+        #get second maximum mask center
         max2 = max(maximums)
         max_index2 = maximums.index(max2)
 
+        #get the angle from first to second mask center
         point1 = maximums_ind[max_index1]
         point2 = maximums_ind[max_index2]
         alpha = atan2((20 - point2[0]) - (20 - point1[0]), point2[1] - point1[1])
 
+        #create new pixels
         rotated_pixels = []
         for i in range(20):
             row = []
@@ -77,11 +85,13 @@ if __name__ == '__main__':
                 row.append(0)
             rotated_pixels.append(row)
 
+        #
         for i in range(20):
             for j in range(20):
-                rotated_j = int(cos(alpha) * j - sin(alpha) * (20 -i))
-                rotated_i = (int(sin(alpha) * j + cos(alpha) * (20-i)))
-                if rotated_i >= 0 and rotated_i < 20 and rotated_j >= 0 and rotated_j < 20:
+                rotated_j = int(cos(alpha) * j - sin(alpha) * (20 - i))
+                rotated_i = (int(sin(alpha) * j + cos(alpha) * (20 - i)))
+                #original corners are lost and become white
+                if (0 <= rotated_i < 20) and (0 <= rotated_j < 20):
                     rotated_pixels[rotated_i][rotated_j] = pixels[i][j]
 
         image.pixels = rotated_pixels
