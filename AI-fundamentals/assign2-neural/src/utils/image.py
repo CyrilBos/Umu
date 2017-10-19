@@ -1,6 +1,6 @@
-class Image:
-    ROW_WIDTH = 20
+ROW_WIDTH = 20
 
+class Image:
     def __init__(self, pixels):
         self._pixels = pixels
 
@@ -17,15 +17,15 @@ class Image:
 
 
     def get_pixel_by_index(self, index):
-        return self._pixels[int(index / self.ROW_WIDTH)][index % self.ROW_WIDTH]
+        return self._pixels[int(index / ROW_WIDTH)][index % ROW_WIDTH]
 
     def _get_contrasted_pixels(self, contrast=0):
         contrasted_pixels = []
         factor = (259*(contrast+255))/(255*(259-contrast))
-        for i in range(self.ROW_WIDTH):
+        for i in range(ROW_WIDTH):
             contrasted_pixels.append([])
-            for j in range(self.ROW_WIDTH):
-                pixel = 8*self.get_pixel_by_index((i*self.ROW_WIDTH)+j)
+            for j in range(ROW_WIDTH):
+                pixel = 8*self.get_pixel_by_index((i*ROW_WIDTH)+j)
                 contrasted = (factor*(pixel-128))+128
                 if contrasted >= 255:
                     contrasted_pixels[i].append(31)

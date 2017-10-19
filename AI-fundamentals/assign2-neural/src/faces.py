@@ -27,7 +27,7 @@ if __name__ == '__main__':
                     raise Exception(
                         'Parsing problem. Image with a row of {} pixels instead of 20'.format(row_pixels_count))
     """
-
+    """
     quarters_indexes = [(0, 0), (0, 1), (1, 1), (1, 0)]
 
     #rotate all the images depending on the eyebrows
@@ -62,13 +62,13 @@ if __name__ == '__main__':
             maximums.append(maximum)
             maximums_ind.append((max_i, max_j))
 
-        #get maximum mask center
+        #get maximum mask center (first eyebrow)
         max1 = max(maximums)
         max_index1 = maximums.index(max1)
         #delete first maximum mask center
         maximums[max_index1] = 0
 
-        #get second maximum mask center
+        #get second maximum mask center (second eyebrow)
         max2 = max(maximums)
         max_index2 = maximums.index(max2)
 
@@ -95,9 +95,13 @@ if __name__ == '__main__':
                     rotated_pixels[rotated_i][rotated_j] = pixels[i][j]
 
         image.pixels = rotated_pixels
+        """
+
+
+
+    test_images = parser.parse_test_images(test_path)
 
     perceptron = Perceptron(training_images)
 
-    test_images = parser.parse_test_images(test_path)
 
     perceptron.classify_images(test_images)
