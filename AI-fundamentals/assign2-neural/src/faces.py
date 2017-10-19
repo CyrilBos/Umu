@@ -27,7 +27,33 @@ if __name__ == '__main__':
                     raise Exception(
                         'Parsing problem. Image with a row of {} pixels instead of 20'.format(row_pixels_count))
     """
-    """
+
+    # Blur the images to flatten values
+    for image in training_images:
+        pixels = image.pixels
+        blurred_pixels = []
+        for i in range(20):
+            row = []
+            for j in range(20):
+                row.append(0)
+            blurred_pixels.append(row)
+        for i in range(1,19):
+            for j in range(1,19):
+                sum = 0
+                sum += pixels[i - 1][j - 1]
+                sum += pixels[i][j - 1]
+                sum += pixels[i + 1][j - 1]
+                sum += pixels[i - 1][j]
+                sum += pixels[i][j]
+                sum += pixels[i + 1][j]
+                sum += pixels[i - 1][j + 1]
+                sum += pixels[i][j + 1]
+                sum += pixels[i + 1][j + 1]
+                blurred_pixels[i][j] = sum/9
+
+        image.pixels = blurred_pixels
+
+    # Rotate the image by trying to find eyes (darkest chunk of pixels)
     quarters_indexes = [(0, 0), (0, 1), (1, 1), (1, 0)]
 
     #rotate all the images depending on the eyebrows
@@ -72,11 +98,6 @@ if __name__ == '__main__':
         max2 = max(maximums)
         max_index2 = maximums.index(max2)
 
-        #get the angle from first to second mask center
-        point1 = maximums_ind[max_index1]
-        point2 = maximums_ind[max_index2]
-        alpha = atan2((20 - point2[0]) - (20 - point1[0]), point2[1] - point1[1])
-
         #create new pixels
         rotated_pixels = []
         for i in range(20):
@@ -85,17 +106,50 @@ if __name__ == '__main__':
                 row.append(0)
             rotated_pixels.append(row)
 
-        #
+        def rotate_square(i,j,times):
+            for k in range(times):
+                i,j = 19-j,i
+            return i,j
+
+        rot_square = 0
+        if (max_index1 == 1 and max_index2 == 2) or (max_index1 == 2 and max_index2 == 1):
+            rot_square = 1
+        elif (max_index1 == 2 and max_index2 == 3) or (max_index1 == 3 and max_index2 == 2):
+            rot_square = 2
+        elif (max_index1 == 3 and max_index2 == 0) or (max_index1 == 0 and max_index2 == 3):
+            rot_square = 3
+
         for i in range(20):
             for j in range(20):
-                rotated_j = int(cos(alpha) * j - sin(alpha) * (20 - i))
-                rotated_i = (int(sin(alpha) * j + cos(alpha) * (20 - i)))
+                new_i,new_j = rotate_square(i, j, rot_square)
+                rotated_pixels[new_i][new_j] = pixels[i][j]
+
+        #get the angle from first to second mask center
+        if max_index1 < max_index2:
+            point1 = maximums_ind[max_index1]
+            point2 = maximums_ind[max_index2]
+        else:
+            point1 = maximums_ind[max_index2]
+            point2 = maximums_ind[max_index1]
+
+        i,j = point1
+        point1 = rotate_square(i,j,rot_square)
+        i,j=point2
+        point2 = rotate_square(i,j, rot_square)
+
+        alpha = atan2(point2[0] - point1[0], point2[1] - point1[1])
+
+        """
+        for i in range(20):
+            for j in range(20):
+                rotated_i = int((i-10)*cos(alpha) - (j-10)*sin(alpha) + 10)
+                rotated_j = int((i-10)*sin(alpha) + (j-10)*cos(alpha) + 10)
                 #original corners are lost and become white
                 if (0 <= rotated_i < 20) and (0 <= rotated_j < 20):
                     rotated_pixels[rotated_i][rotated_j] = pixels[i][j]
-
-        image.pixels = rotated_pixels
         """
+        image.pixels = rotated_pixels
+
 
 
 
