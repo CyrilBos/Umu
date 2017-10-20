@@ -2,6 +2,13 @@ from .image import IMAGE_ROW_WIDTH
 
 
 def get_mask_sum(pixels, i, j):
+    """
+    Calculates the sum of pixels grey levels around the pixel at location [i,j] (3x3 mask)
+    :param pixels: pixels matrix
+    :param i: row
+    :param j: column
+    :return:
+    """
     mask_sum = 0
     mask_sum += pixels[i - 1][j - 1]
     mask_sum += pixels[i][j - 1]
@@ -16,7 +23,10 @@ def get_mask_sum(pixels, i, j):
 
 
 def blur_images(images):
-    # Blur the images to flatten values
+    """
+    Blurs the images passed by reference.
+    :param images: images to blur
+    """
     for image in images:
         pixels = image.pixels
         blurred_pixels = []
@@ -33,6 +43,10 @@ def blur_images(images):
 
 
 def rotate_images(images):
+    """
+    Detects the eyebrows of the images and rotate the images so the eyebrows are always on the top half.
+    :param images: images to rotate
+    """
     def rotate_square(i, j, times):
         for k in range(times):
             i, j = IMAGE_ROW_WIDTH - 1 - j, i

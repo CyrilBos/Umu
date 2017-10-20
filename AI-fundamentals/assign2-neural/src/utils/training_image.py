@@ -3,7 +3,16 @@ from .emotion import Emotion
 
 
 class TrainingImage(Image):
+    """
+    Inherits from Image to add an emotion field used in training and evaluation.
+    """
     def __init__(self, pixels, emotion_value):
+        """
+        Intializes the TrainingImage with the parsed emotion value.
+        :param pixels:
+        :param emotion_value: int that codes the emotion in the range [0-4)
+        :type emotion_value: int
+        """
         super().__init__(pixels)
         self.__emotion = Emotion(emotion_value)
 
@@ -13,6 +22,3 @@ class TrainingImage(Image):
     @property
     def emotion(self):
         return self.__emotion
-
-    def get_contrasted_image(self):
-        return TrainingImage(self._get_contrasted_pixels(), self.__emotion)
