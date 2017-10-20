@@ -13,19 +13,19 @@ INPUT_NODES_COUNT = 400
 
 
 class Perceptron:
-    def __init__(self, images, training_proportion=0.66, learning_rate=0.1, max_iteration=30,
-                 squared_error_mean_threshold=0.15):
+    def __init__(self, images, training_proportion=0.66, learning_rate=0.1, min_iteration=15, max_iteration=100,
+                 squared_error_mean_threshold=0.1):
         self._output_nodes = []
         self._learning_rate = learning_rate
         training_images_len = int(len(images) * training_proportion)
 
+        fixed_input = FixedInputNode(fixed_pixel_value=1)
         # create one output node for each emotion
         for i in range(len(Emotion.emotions_list)):
             output_node = OutputNode(emotion=Emotion(i))
 
             # create the link between the output node and the fixed input node with a constant pixel value of 1
-            fixed_input = FixedInputNode(fixed_pixel_value=1)
-            # output_node.input_links.append(Link(fixed_input, weight=1))
+            output_node.input_links.append(Link(fixed_input, weight=1))
 
             self._output_nodes.append(output_node)
 
@@ -43,7 +43,8 @@ class Perceptron:
         squared_error_mean, precision_score = self.train_step(evaluation_images, images_length, iteration,
                                                               training_images)
 
-        while squared_error_mean > squared_error_mean_threshold and iteration < max_iteration:  # iteration < 50 and precision_score < 70
+        while iteration < min_iteration or (
+                squared_error_mean > squared_error_mean_threshold and iteration < max_iteration):
             training_images = images[:training_images_len]
             evaluation_images = images[training_images_len:]
             iteration += 1

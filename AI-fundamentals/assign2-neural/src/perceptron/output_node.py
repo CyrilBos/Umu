@@ -3,14 +3,14 @@ import math
 
 class OutputNode:
     """
-        Output node that contains the links to its inputs and represents one of the four emotions.
-        """
+    Output node that contains the links to its inputs and represents one of the four emotions.
+    """
 
     def __init__(self, emotion):
         """
        Initializes a new instance of InputNode.
-       :param pixel_index: Index of targeted pixel in the image matrix
-       :type pixel_index: int
+       :param emotion: Index of targeted pixel in the image matrix
+       :type emotion: int
        """
         self._emotion = emotion
         self._input_links = []
