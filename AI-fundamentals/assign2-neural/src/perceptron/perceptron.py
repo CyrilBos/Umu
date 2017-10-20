@@ -18,7 +18,7 @@ class Perceptron:
     """
 
     def __init__(self, images, training_proportion=0.66, learning_rate=0.1, min_iteration=15, max_iteration=100,
-                 squared_error_mean_threshold=0.1):
+                 squared_error_mean_threshold=0.08):
         """
         Initializes a Perceptron with the given images and parameters.
         The training stops if max_iteration is reached or if min_iteration is reached and the mean of squared errors is

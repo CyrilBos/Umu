@@ -6,6 +6,7 @@ class TrainingImage(Image):
     """
     Inherits from Image to add an emotion field used in training and evaluation.
     """
+
     def __init__(self, pixels, emotion_value):
         """
         Intializes the TrainingImage with the parsed emotion value.
