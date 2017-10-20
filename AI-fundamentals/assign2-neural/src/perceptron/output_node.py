@@ -9,13 +9,18 @@ class OutputNode:
     def __init__(self, emotion):
         """
        Initializes a new instance of InputNode.
-       :param emotion: Index of targeted pixel in the image matrix
-       :type emotion: int
+       :param emotion: instance of Emotion class to link this output node to
+       :type emotion: Emotion
        """
         self._emotion = emotion
         self._input_links = []
 
     def get_activation_level(self, image):
+        """
+        Computes and returns the activation level of the output node.
+        :param image: selected image for the input nodes to return their pixel value
+        :type image: Image
+        """
         node_sum = 0
         for input_link in self._input_links:
             input_node = input_link.input_node

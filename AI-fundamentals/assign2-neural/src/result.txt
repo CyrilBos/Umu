@@ -1,70 +1,55 @@
 # Iteration 0
-# Precision on evaluation images: 60.294%
-# error sum: 0.336
-# Iteration 1
-# Precision on evaluation images: 63.235%
-# error sum: 0.214
-# Iteration 2
-# Precision on evaluation images: 86.765%
-# error sum: 0.167
-# Iteration 3
-# Precision on evaluation images: 86.765%
-# error sum: 0.207
-# Iteration 4
-# Precision on evaluation images: 67.647%
-# error sum: 0.218
-# Iteration 5
-# Precision on evaluation images: 79.412%
+# Percentage of correct classifications on evaluation set: 76.471%
 # error sum: 0.193
-# Iteration 6
-# Precision on evaluation images: 77.941%
-# error sum: 0.169
-# Iteration 7
-# Precision on evaluation images: 91.176%
-# error sum: 0.124
-# Iteration 8
-# Precision on evaluation images: 77.941%
+# Iteration 0
+# Percentage of correct classifications on evaluation set: 77.941%
+# error sum: 0.188
+# Iteration 1
+# Percentage of correct classifications on evaluation set: 83.824%
+# error sum: 0.177
+# Iteration 2
+# Percentage of correct classifications on evaluation set: 85.294%
 # error sum: 0.141
+# Iteration 3
+# Percentage of correct classifications on evaluation set: 76.471%
+# error sum: 0.141
+# Iteration 4
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.119
+# Iteration 5
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.110
+# Iteration 6
+# Percentage of correct classifications on evaluation set: 88.235%
+# error sum: 0.096
+# Iteration 7
+# Percentage of correct classifications on evaluation set: 89.706%
+# error sum: 0.099
+# Iteration 8
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.108
 # Iteration 9
-# Precision on evaluation images: 89.706%
-# error sum: 0.124
+# Percentage of correct classifications on evaluation set: 85.294%
+# error sum: 0.085
 # Iteration 10
-# Precision on evaluation images: 92.647%
-# error sum: 0.127
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.097
 # Iteration 11
-# Precision on evaluation images: 91.176%
-# error sum: 0.126
+# Percentage of correct classifications on evaluation set: 86.765%
+# error sum: 0.095
 # Iteration 12
-# Precision on evaluation images: 94.118%
-# error sum: 0.132
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.091
 # Iteration 13
-# Precision on evaluation images: 94.118%
-# error sum: 0.139
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.076
 # Iteration 14
-# Precision on evaluation images: 92.647%
-# error sum: 0.116
-# Iteration 15
-# Precision on evaluation images: 91.176%
-# error sum: 0.126
-# Iteration 16
-# Precision on evaluation images: 92.647%
-# error sum: 0.120
-# Iteration 17
-# Precision on evaluation images: 91.176%
-# error sum: 0.113
-# Iteration 18
-# Precision on evaluation images: 92.647%
-# error sum: 0.130
-# Iteration 19
-# Precision on evaluation images: 92.647%
-# error sum: 0.139
-# Iteration 20
-# Precision on evaluation images: 91.176%
-# error sum: 0.093
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.080
 Image1 3
 Image1 1
 Image1 2
-Image1 3
+Image1 4
 Image1 1
 Image1 2
 Image1 3
@@ -105,7 +90,7 @@ Image1 1
 Image1 2
 Image1 3
 Image1 2
-Image1 3
+Image1 1
 Image1 4
 Image1 2
 Image1 3
@@ -114,33 +99,33 @@ Image1 2
 Image1 4
 Image1 1
 Image1 1
-Image1 3
-Image1 2
-Image1 3
-Image1 3
-Image1 4
-Image1 3
-Image1 1
-Image1 1
-Image1 1
-Image1 2
-Image1 2
-Image1 1
 Image1 4
 Image1 2
-Image1 2
-Image1 2
-Image1 4
 Image1 3
-Image1 2
-Image1 3
-Image1 2
-Image1 2
 Image1 3
 Image1 4
 Image1 1
 Image1 1
 Image1 1
+Image1 1
+Image1 2
+Image1 2
+Image1 1
+Image1 4
+Image1 2
+Image1 2
+Image1 2
+Image1 4
+Image1 3
+Image1 2
+Image1 3
+Image1 2
+Image1 2
+Image1 3
+Image1 4
+Image1 1
+Image1 1
+Image1 1
 Image1 2
 Image1 2
 Image1 2
@@ -157,7 +142,7 @@ Image1 3
 Image1 4
 Image1 3
 Image1 4
-Image1 3
-Image1 3
+Image1 1
+Image1 4
 Image1 1
 Image1 2
