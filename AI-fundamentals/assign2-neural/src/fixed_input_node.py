@@ -1,4 +1,4 @@
-from .input_node import InputNode, MAX_GREY_LEVEL
+from input_node import InputNode, MAX_GREY_LEVEL
 
 
 class FixedInputNode(InputNode):

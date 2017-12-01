@@ -1,7 +1,7 @@
 import re
 
-from .training_image import TrainingImage
-from .image import Image
+from training_image import TrainingImage
+from image import Image
 
 
 class Parser:

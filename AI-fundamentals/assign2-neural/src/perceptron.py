@@ -1,13 +1,12 @@
-from logging import getLogger
 from random import randrange
 
-from .input_node import InputNode
+from input_node import InputNode
 
-from .link import Link
-from .output_node import OutputNode
-from .fixed_input_node import FixedInputNode
+from link import Link
+from output_node import OutputNode
+from fixed_input_node import FixedInputNode
 
-from utils import Emotion
+from emotion import Emotion
 
 INPUT_NODES_COUNT = 400
 
@@ -59,7 +58,6 @@ class Perceptron:
         # first training iteration
         training_images = images[:training_images_len]
         evaluation_images = images[training_images_len:]
-        images_length = len(training_images)
 
         iteration = 0
         squared_error_mean, precision_score = self.train_step(training_images, evaluation_images, iteration)
@@ -129,7 +127,7 @@ class Perceptron:
         :return: returns the percentage of correct classifcations
         :rtype: float
         """
-        #Calculate the mean of successful predictions
+        # Calculate the mean of successful predictions
         success = 0
         for evaluation_image in evaluation_images:
             activated_output = self.predict(evaluation_image)
@@ -162,11 +160,11 @@ class Perceptron:
         :return: returns the activated output node
         :rtype: OutputNode
         """
-        #Consider the first output node as the one with the biggest activation level
+        # Consider the first output node as the one with the biggest activation level
         max = self._output_nodes[0].get_activation_level(image)
         max_index = 0
 
-        #check if there is another "more" activated output node
+        # check if there is another "more" activated output node
         for i in range(1, len(self._output_nodes)):
             activation_level = self._output_nodes[i].get_activation_level(image)
             if activation_level > max:
@@ -184,3 +182,4 @@ class Perceptron:
         for image in images:
             emotion = self.predict(image).emotion
             print('Image{} {}'.format(index, emotion.value + 1))
+            index += 1

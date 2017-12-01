@@ -1,7 +1,8 @@
 import sys
 
-from utils import Parser, image_preprocessing
+import image_preprocessing
 from perceptron import Perceptron
+from parser import Parser
 
 if __name__ == '__main__':
     training_path = sys.argv[1]

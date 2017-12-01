@@ -1,4 +1,4 @@
-from .image import IMAGE_ROW_WIDTH
+from image import IMAGE_ROW_WIDTH
 
 
 def get_mask_sum(pixels, i, j):

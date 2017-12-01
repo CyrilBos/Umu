@@ -1,5 +1,5 @@
-from .image import Image
-from .emotion import Emotion
+from image import Image
+from emotion import Emotion
 
 
 class TrainingImage(Image):

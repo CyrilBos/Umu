@@ -1,0 +1,160 @@
+# Iteration 0
+# Percentage of correct classifications on evaluation set: 85.294%
+# error sum: 0.285
+# Iteration 0
+# Percentage of correct classifications on evaluation set: 58.824%
+# error sum: 0.163
+# Iteration 1
+# Percentage of correct classifications on evaluation set: 79.412%
+# error sum: 0.177
+# Iteration 2
+# Percentage of correct classifications on evaluation set: 88.235%
+# error sum: 0.163
+# Iteration 3
+# Percentage of correct classifications on evaluation set: 89.706%
+# error sum: 0.138
+# Iteration 4
+# Percentage of correct classifications on evaluation set: 80.882%
+# error sum: 0.130
+# Iteration 5
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.108
+# Iteration 6
+# Percentage of correct classifications on evaluation set: 80.882%
+# error sum: 0.126
+# Iteration 7
+# Percentage of correct classifications on evaluation set: 89.706%
+# error sum: 0.110
+# Iteration 8
+# Percentage of correct classifications on evaluation set: 89.706%
+# error sum: 0.098
+# Iteration 9
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.104
+# Iteration 10
+# Percentage of correct classifications on evaluation set: 89.706%
+# error sum: 0.090
+# Iteration 11
+# Percentage of correct classifications on evaluation set: 92.647%
+# error sum: 0.095
+# Iteration 12
+# Percentage of correct classifications on evaluation set: 85.294%
+# error sum: 0.084
+# Iteration 13
+# Percentage of correct classifications on evaluation set: 89.706%
+# error sum: 0.080
+# Iteration 14
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.091
+# Iteration 15
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.085
+# Iteration 16
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.089
+# Iteration 17
+# Percentage of correct classifications on evaluation set: 88.235%
+# error sum: 0.093
+# Iteration 18
+# Percentage of correct classifications on evaluation set: 91.176%
+# error sum: 0.077
+Image1 3
+Image2 1
+Image3 2
+Image4 4
+Image5 1
+Image6 2
+Image7 3
+Image8 4
+Image9 3
+Image10 2
+Image11 3
+Image12 2
+Image13 4
+Image14 3
+Image15 1
+Image16 4
+Image17 2
+Image18 3
+Image19 1
+Image20 1
+Image21 3
+Image22 3
+Image23 4
+Image24 4
+Image25 2
+Image26 2
+Image27 1
+Image28 4
+Image29 4
+Image30 1
+Image31 4
+Image32 1
+Image33 1
+Image34 2
+Image35 3
+Image36 3
+Image37 2
+Image38 1
+Image39 1
+Image40 4
+Image41 1
+Image42 2
+Image43 3
+Image44 2
+Image45 1
+Image46 4
+Image47 2
+Image48 3
+Image49 2
+Image50 2
+Image51 4
+Image52 1
+Image53 1
+Image54 4
+Image55 2
+Image56 3
+Image57 3
+Image58 4
+Image59 1
+Image60 1
+Image61 1
+Image62 1
+Image63 2
+Image64 2
+Image65 1
+Image66 4
+Image67 2
+Image68 4
+Image69 2
+Image70 4
+Image71 3
+Image72 2
+Image73 3
+Image74 2
+Image75 2
+Image76 3
+Image77 4
+Image78 1
+Image79 1
+Image80 1
+Image81 2
+Image82 1
+Image83 2
+Image84 4
+Image85 2
+Image86 2
+Image87 3
+Image88 4
+Image89 4
+Image90 1
+Image91 2
+Image92 3
+Image93 3
+Image94 4
+Image95 3
+Image96 4
+Image97 1
+Image98 4
+Image99 1
+Image100 2

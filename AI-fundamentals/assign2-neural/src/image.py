@@ -5,6 +5,7 @@ class Image:
     """
     Class that stores parsed pixels grey values as a list of lists of int.
     """
+
     def __init__(self, pixels):
         self._pixels = pixels
 
